@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/public/css/index.css">
+    <link rel="stylesheet" href="/assets/public/css/chats.css">
+    <title>Loopin - Chats</title>
+</head>
+
+<body>
+    <div id="notify"></div>
+
+    <div class="app-container">
+        <!-- Left Sidebar Navigation -->
+        <div class="sidebar-left">
+            <div class="logo">
+                <i class="fas fa-comments" style="color: #4361ee;"></i>
+                <h1>Loopin</h1>
+            </div>
+
+            <nav class="main-nav">
+                <a href="/" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="/chats" class="nav-item active">
+                    <i class="fas fa-comment-dots"></i>
+                    <span>Chats</span>
+                </a>
+                <a href="/search" class="nav-item">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Find Friends</span>
+                </a>
+                <a href="/friends" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Friends</span>
+                </a>
+                <a href="/me" class="nav-item">
+                    <i class="fas fa-user"></i>
+                    <span>My Profile</span>
+                </a>
+                <a href="#settings" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="user-profile">
+                <div class="avatar">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile Picture">
+                    <span class="online-status"></span>
+                </div>
+                <div class="user-info-div">
+                    <span class="username">JohnDoe</span>
+                    <span class="user-handle">johndoe@gmail.com</span>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Chats Main Content -->
+        <div class="chats-container">
+            <!-- Conversations List -->
+            <div class="conversations-list">
+                <div class="chats-header">
+                    <h2>Messages</h2>
+                    <button class="btn-new-chat">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search messages">
+                </div>
+
+                <div class="conversations">
+                    <!-- Conversation 1 (Active) -->
+                    <div class="conversation active">
+                        <div class="avatar">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile Picture">
+                            <span class="online-status"></span>
+                        </div>
+                        <div class="conversation-info">
+                            <div class="conversation-header">
+                                <span class="username">Sarah Smith</span>
+                                <span class="time">12:30 PM</span>
+                            </div>
+                            <div class="last-message">
+                                <p>Hey! How about we meet this weekend?</p>
+                                <span class="unread-count">2</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Conversation 2 -->
+                    <div class="conversation">
+                        <div class="avatar">
+                            <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="Profile Picture">
+                        </div>
+                        <div class="conversation-info">
+                            <div class="conversation-header">
+                                <span class="username">Mike Johnson</span>
+                                <span class="time">10:15 AM</span>
+                            </div>
+                            <div class="last-message">
+                                <p>Did you see the game last night?</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Conversation 3 -->
+                    <div class="conversation">
+                        <div class="avatar">
+                            <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Profile Picture">
+                            <span class="online-status"></span>
+                        </div>
+                        <div class="conversation-info">
+                            <div class="conversation-header">
+                                <span class="username">Emma Wilson</span>
+                                <span class="time">Yesterday</span>
+                            </div>
+                            <div class="last-message">
+                                <p>Thanks for the recommendation!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Conversation 4 -->
+                    <div class="conversation">
+                        <div class="avatar">
+                            <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Profile Picture">
+                        </div>
+                        <div class="conversation-info">
+                            <div class="conversation-header">
+                                <span class="username">David Brown</span>
+                                <span class="time">Monday</span>
+                            </div>
+                            <div class="last-message">
+                                <p>Let me know when you're free</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Conversation 5 -->
+                    <div class="conversation">
+                        <div class="avatar">
+                            <img src="https://randomuser.me/api/portraits/women/33.jpg" alt="Profile Picture">
+                            <span class="online-status"></span>
+                        </div>
+                        <div class="conversation-info">
+                            <div class="conversation-header">
+                                <span class="username">Lisa Taylor</span>
+                                <span class="time">Jun 12</span>
+                            </div>
+                            <div class="last-message">
+                                <p>The documents are ready for review</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Chat -->
+            <div class="active-chat">
+                <div class="chat-header">
+                    <div class="user-info">
+                        <div class="avatar">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile Picture">
+                            <span class="online-status"></span>
+                        </div>
+                        <div class="user-details">
+                            <span class="username">Sarah Smith</span>
+                            <span class="status">Online</span>
+                        </div>
+                    </div>
+                    <div class="chat-actions">
+                        <button class="btn-action">
+                            <i class="fas fa-phone"></i>
+                        </button>
+                        <button class="btn-action">
+                            <i class="fas fa-video"></i>
+                        </button>
+                        <button class="btn-action">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="chat-messages">
+                    <!-- Message Date -->
+                    <div class="message-date">
+                        <span>Today</span>
+                    </div>
+
+                    <!-- Received Message -->
+                    <div class="message received">
+                        <div class="avatar">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile Picture">
+                        </div>
+                        <div class="message-content">
+                            <p>Hey there! How's it going?</p>
+                            <span class="message-time">12:15 PM</span>
+                        </div>
+                    </div>
+
+                    <!-- Sent Message -->
+                    <div class="message sent">
+                        <div class="message-content">
+                            <p>I'm doing great! Just finished that project we talked about.</p>
+                            <span class="message-time">12:17 PM</span>
+                        </div>
+                    </div>
+
+                    <!-- Received Message -->
+                    <div class="message received">
+                        <div class="avatar">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile Picture">
+                        </div>
+                        <div class="message-content">
+                            <p>That's awesome! How about we meet this weekend to celebrate?</p>
+                            <span class="message-time">12:20 PM</span>
+                        </div>
+                    </div>
+
+                    <!-- Sent Message -->
+                    <div class="message sent">
+                        <div class="message-content">
+                            <p>Sounds like a plan! Saturday work for you?</p>
+                            <span class="message-time">12:22 PM</span>
+                        </div>
+                    </div>
+
+                    <!-- Received Message -->
+                    <div class="message received">
+                        <div class="avatar">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile Picture">
+                        </div>
+                        <div class="message-content">
+                            <p>Perfect! Let's meet at the coffee shop at 2pm.</p>
+                            <span class="message-time">12:30 PM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-input">
+                    <button class="btn-attachment">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <input type="text" placeholder="Type a message...">
+                    <button class="btn-send">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/public/js/chats.js"></script>
+</body>
+
+</html>

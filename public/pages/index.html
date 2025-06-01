@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="shortcut icon" href="/assets/imgs/icon.png" type="image/x-icon">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/public/css/components/notifier.css">
+    <link rel="stylesheet" href="/assets/public/css/components/loader.css">
+    <link rel="stylesheet" href="/assets/public/css/index.css">
+    <title>Loopin - Home</title>
+</head>
+
+<body>
+    <div id="notify"></div>
+
+    <div class="loader-container" id="loader-container">
+        <div class="loader">
+            <img src="/assets/imgs/icon.png" alt="Website Logo" class="loader-logo">
+        </div>
+    </div>
+
+    <div class="app-container">
+        <!-- Left Sidebar Navigation -->
+        <div class="sidebar-left">
+            <div class="logo">
+                <img src="/assets/imgs/icon.png" class="logo-img-custom" alt="">
+                <h1>Loopin</h1>
+            </div>
+
+            <nav class="main-nav">
+                <a href="/" class="nav-item active">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="/chats" class="nav-item">
+                    <i class="fas fa-comment-dots"></i>
+                    <span>Chats</span>
+                </a>
+                <a href="/search" class="nav-item">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Find Friends</span>
+                </a>
+                <a href="/friends" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Friends</span>
+                </a>
+                <a href="/me" class="nav-item">
+                    <i class="fas fa-user"></i>
+                    <span>My Profile</span>
+                </a>
+                <a href="#settings" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="user-profile" onclick="logoutAll()">
+                <div class="avatar">
+                    <img src="https://dummyimage.com/150x150/cccccc/969696" alt="Profile Picture">
+                    <span class="online-status"></span>
+                </div>
+                <div class="user-info-div">
+                    <span class="username">Username</span>
+                    <span class="user-handle">user@example.com</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Feed -->
+        <div class="main-content">
+            <div class="create-post">
+                <div class="post-input">
+                    <div class="avatar" style="position: static;">
+                        <img src="https://dummyimage.com/150x150/cccccc/969696" id="user-profile-img"
+                            alt="Profile Picture">
+                    </div>
+                    <input type="text" placeholder="What's on your mind?">
+                </div>
+                <div class="post-actions">
+                    <button class="btn-action">
+                        <i class="fas fa-image"></i>
+                        <span>Photo</span>
+                    </button>
+                    <button class="btn-post">Post</button>
+                </div>
+            </div>
+
+            <!-- Posts Feed -->
+            <div class="posts-feed">
+                <!-- Post 1 -->
+                <div class="post">
+                    <div class="post-header">
+                        <div class="user-info">
+                            <div class="avatar">
+                                <img src="https://dummyimage.com/150x150/cccccc/969696" alt="Profile Picture">
+                                <span class="online-status"></span>
+                            </div>
+                            <div class="user-details">
+                                <span class="username">User Name</span>
+                                <span class="post-time">Time ago</span>
+                            </div>
+                        </div>
+                        <button class="btn-more">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                    </div>
+
+                    <div class="post-content">
+                        <p>Post content text</p>
+                        <div class="post-image">
+                            <img src="https://dummyimage.com/600x400/cccccc/969696" alt="Post image">
+                        </div>
+                    </div>
+
+                    <div class="post-stats">
+                        <span class="likes-count">X likes</span>
+                        <span class="comments-count">Y comments</span>
+                        <span class="shares-count">Z shares</span>
+                    </div>
+
+                    <div class="post-actions">
+                        <button class="btn-like">
+                            <i class="far fa-heart"></i>
+                            <span>Like</span>
+                        </button>
+                        <button class="btn-comment">
+                            <i class="far fa-comment"></i>
+                            <span>Comment</span>
+                        </button>
+                        <button class="btn-share">
+                            <i class="fas fa-share"></i>
+                            <span>Share</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Post 2 -->
+                <div class="post">
+                    <div class="post-header">
+                        <div class="user-info">
+                            <div class="avatar">
+                                <img src="https://dummyimage.com/150x150/cccccc/969696" alt="Profile Picture">
+                            </div>
+                            <div class="user-details">
+                                <span class="username">User Name</span>
+                                <span class="post-time">Time ago</span>
+                            </div>
+                        </div>
+                        <button class="btn-more">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                    </div>
+
+                    <div class="post-content">
+                        <p>post content text</p>
+                    </div>
+
+                    <div class="post-stats">
+                        <span class="likes-count">X likes</span>
+                        <span class="comments-count">Y comments</span>
+                        <span class="shares-count">Z shares</span>
+                    </div>
+
+                    <div class="post-actions">
+                        <button class="btn-like">
+                            <i class="far fa-heart"></i>
+                            <span>Like</span>
+                        </button>
+                        <button class="btn-comment">
+                            <i class="far fa-comment"></i>
+                            <span>Comment</span>
+                        </button>
+                        <button class="btn-share">
+                            <i class="fas fa-share"></i>
+                            <span>Share</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="caught-up">
+                <div class="caught-up-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z">
+                        </path>
+                    </svg>
+                </div>
+                <h3>You're all caught up</h3>
+                <p>You've seen all new posts from your last updated feed</p>
+            </div>
+
+            <div id="post-container" class="post-container-infinite">
+                <!-- Infinite Posts -->
+            </div>
+
+            <div class="loader-infinite-div">
+                <span class="loader-infinite" id="infinite-post-loader"></span>
+            </div>
+        </div>
+
+        <!-- Right Sidebar - Online Friends -->
+        <div class="sidebar-right">
+            <div class="section-header">
+                <h3>Online Friends</h3>
+            </div>
+
+            <div class="online-friends">
+                <!-- Friend 1 -->
+                <div class="friend">
+                    <div class="avatar">
+                        <img src="https://dummyimage.com/150x150/cccccc/969696" alt="Profile Picture">
+                        <span class="online-status"></span>
+                    </div>
+                    <div class="friend-info">
+                        <span class="username">Friend Name</span>
+                        <span class="status">Active now</span>
+                    </div>
+                </div>
+
+                <!-- Friend 2 -->
+                <div class="friend">
+                    <div class="avatar">
+                        <img src="https://dummyimage.com/150x150/cccccc/969696" alt="Profile Picture">
+                        <span class="online-status"></span>
+                    </div>
+                    <div class="friend-info">
+                        <span class="username">Friend Name</span>
+                        <span class="status">Active X ago</span>
+                    </div>
+                </div>
+
+                <!-- Friend 3 -->
+                <div class="friend">
+                    <div class="avatar">
+                        <img src="https://dummyimage.com/150x150/cccccc/969696" alt="Profile Picture">
+                        <span class="online-status"></span>
+                    </div>
+                    <div class="friend-info">
+                        <span class="username">Friend Name</span>
+                        <span class="status">Active X ago</span>
+                    </div>
+                </div>
+
+                <!-- Friend 4 -->
+                <div class="friend">
+                    <div class="avatar">
+                        <img src="https://dummyimage.com/150x150/cccccc/969696" alt="Profile Picture">
+                        <span class="online-status"></span>
+                    </div>
+                    <div class="friend-info">
+                        <span class="username">Friend Name</span>
+                        <span class="status">Active X ago</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/public/js/components/notifier.js"></script>
+    <script src="/assets/public/js/components/loader.js"></script>
+    <script src="/assets/public/js/index.js"></script>
+</body>
+
+</html>

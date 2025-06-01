@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/auth/css/email-verification.css">
+    <title>Email Verification - Loopin</title>
+</head>
+
+<body>
+    <div class="verification-container">
+        <div class="logo">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                    stroke="#4361ee" stroke-width="2" />
+                <path d="M8 12L11 15L16 9" stroke="#4361ee" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </div>
+
+        <div id="loading">
+            <h1>Verifying your email</h1>
+            <p class="message">Please wait while we verify your email address.</p>
+            <div class="spinner"></div>
+        </div>
+
+        <div id="success" style="display: none;">
+            <h1>Email Verified!</h1>
+            <p class="message success">Your email has been successfully verified.</p>
+            <div class="btn-group">
+                <a id="login-btn" href="/auth" class="btn btn-primary">Log In</a>
+                <a href="/" class="btn btn-outline">Go to Homepage</a>
+            </div>
+        </div>
+
+        <div id="already-verified" style="display: none;">
+            <h1>Already Verified</h1>
+            <p class="message">Your email is already verified.</p>
+            <div class="btn-group">
+                <a id="already-login-btn" href="/auth" class="btn btn-primary">Log In</a>
+                <a href="/" class="btn btn-outline">Go to Homepage</a>
+            </div>
+        </div>
+
+        <div id="error" style="display: none;">
+            <h1>Verification Failed</h1>
+            <p class="message error" id="error-message"></p>
+            <div class="btn-group">
+                <a id="error-action-btn" href="/auth/register" class="btn btn-primary">Register Again</a>
+                <a href="/" class="btn btn-outline">Go to Homepage</a>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/assets/auth/js/email-verification.js"></script>
+</body>
+
+</html>
