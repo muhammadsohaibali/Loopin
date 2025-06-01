@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
 // CONSTANTS
 const DEFAULT_AVATAR = 'https://randomuser.me/api/portraits/lego/1.jpg';
-const POSTS_PER_LOAD = 20; // Added constant for infinite scroll
+const POSTS_PER_LOAD = 20;
 
 /**
  * Formats large numbers into shortened strings (e.g., 1500 -> 1.5K)
@@ -41,7 +41,6 @@ async function fetchHomepageData(run = 'all') {
             throw new Error(message || 'Unknown error occurred');
         }
 
-        // Use switch for better readability and maintainability
         switch (run) {
             case "user":
                 populateUserInfo(data.user);
@@ -74,7 +73,6 @@ function populateUserInfo(user) {
     const userProfile = document.querySelector('.user-profile');
     if (!userProfile) return;
 
-    // Update avatar images (consolidated duplicate code)
     const avatarImages = [
         userProfile.querySelector('.avatar img'),
         document.querySelector('#user-profile-img')
@@ -85,14 +83,12 @@ function populateUserInfo(user) {
         img.alt = `${user.username}'s profile picture`;
     });
 
-    // Update username and email
     const usernameEl = userProfile.querySelector('.username');
     const userHandleEl = userProfile.querySelector('.user-handle');
 
     if (usernameEl) usernameEl.textContent = user.username || '';
     if (userHandleEl) userHandleEl.textContent = user.email || '';
 
-    // Update online status
     const onlineStatus = userProfile.querySelector('.online-status');
     if (onlineStatus) {
         onlineStatus.style.backgroundColor = user.isOnline ? '#4bb543' : '#adb5bd';
