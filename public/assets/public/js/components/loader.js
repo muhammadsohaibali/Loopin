@@ -1,3 +1,6 @@
-function showLoader(displayCondition) {
-    document.getElementById('loader-container').style.display = displayCondition ? "flex" : 'none'
+function showLoader(show) {
+    const loader = document.getElementById('loader-container');
+    if (loader) {
+        loader.style.display = show ? 'flex' : 'none';
+    }
 }
