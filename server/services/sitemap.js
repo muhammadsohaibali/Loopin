@@ -12,12 +12,12 @@ router.get('/sitemap.xml', async (req, res) => {
             { url: '/me', changefreq: 'monthly', priority: 0.5 }
         ];
 
-        const hostname = process.env.NODE_ENV === 'production'
-            ? 'https://loopin-xha8.onrender.com'
-            : 'http://localhost:3000';
+        // const hostname = process.env.NODE_ENV === 'production'
+        //     ? 'https://loopin-xha8.onrender.com'
+        //     : 'http://localhost:3000';
 
         const stream = new SitemapStream({
-            hostname,
+            hostname: 'https://loopin-xha8.onrender.com',
             xmlns: {
                 news: false,
                 image: false,
@@ -26,10 +26,12 @@ router.get('/sitemap.xml', async (req, res) => {
         });
 
         res.header('Content-Type', 'application/xml');
+        res.header('Cache-Control', 'public, max-age=3600');
+        res.header('X-Robots-Tag', 'noindex');
+
         stream.pipe(res);
         links.forEach(link => stream.write(link));
         stream.end();
-
     } catch (e) {
         console.error('Sitemap Error:', e);
         res.status(500).send('Error generating sitemap');
