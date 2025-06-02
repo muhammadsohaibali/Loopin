@@ -46,6 +46,11 @@ app.use("/api/posts/", require("./routes/posts"));
 // ======================= Assets =======================
 app.use('/assets', express.static(path.join(__dirname, '../public/assets')));
 
+// =================== Google SEO ===================
+app.get('/google3be646e8a91de87f.html', (req, res) => {
+    res.send('google-site-verification: google3be646e8a91de87f.html');
+}); 
+
 // =================== Authentication ===================
 app.get('/auth', unAuthOnlyPage('login.html'));
 app.get('/auth/register', unAuthOnlyPage('register.html'));
