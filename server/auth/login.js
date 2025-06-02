@@ -67,10 +67,8 @@ router.post('/login', async (req, res) => {
         const sessionId = uuid();
 
         if (deviceInfo.userAgent.toLowerCase().includes("windows")) {
-            console.log('windows')
             deviceInfo.userAgent = "Windows"
         } else if (deviceInfo.userAgent.toLowerCase().includes("android")) {
-            console.log('android')
             deviceInfo.userAgent = "Android"
         }
 
