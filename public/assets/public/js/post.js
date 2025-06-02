@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const postCommentButton = document.getElementById('postCommentButton');
     const currentUserAvatar = document.querySelectorAll('.currentUserAvatar');
     const currentUserDetails = document.getElementById('user-info-div');
+    const deletePostBtn = document.getElementById('postDltButton')
 
     const currentUser = await fetchCurrentUser();
 
@@ -100,6 +101,26 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
     }
 
+    // Delete Post
+    async function deletePost(postId) {
+        try {
+            const response = await fetch('/api/posts/post', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ postId })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete post');
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Error deleting post:', error);
+            return null;
+        }
+    }
+
     // Post a new comment via API
     async function postNewComment(postId, content) {
         try {
@@ -173,6 +194,8 @@ document.addEventListener('DOMContentLoaded', async function () {
         } else {
             postImageContainer.style.display = 'none';
         }
+
+        deletePostBtn.style.display = currentUser.email === post.author ? 'flex' : 'none'
 
         likesCount.textContent = `${post.likes.length} likes`;
         commentsCount.textContent = `${post.comments.length} comments`;
@@ -256,6 +279,45 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
 
         populatePostData(postData);
+
+        deletePostBtn.addEventListener('click', async () => {
+            if (!currentUser) {
+                notify("Please login to delete posts", "error");
+                return;
+            }
+
+            const confirmed = await showConfirmationBox(
+                'Are you sure you want to delete this post? This action cannot be undone.',
+                {
+                    confirmText: 'Delete',
+                    cancelText: 'Cancel',
+                    confirmColor: '#ef233c',
+                    cancelColor: '#4361ee'
+                }
+            );
+
+            if (!confirmed) return;
+
+            try {
+                const data = await deletePost(postId);
+
+                if (!data) {
+                    throw new Error("No response from server");
+                }
+
+                if (data.error) {
+                    notify(data.error, "error");
+                } else {
+                    notify(data.message || "Post deleted successfully", "success");
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                }
+            } catch (error) {
+                console.error("Delete post error:", error);
+                notify("Failed to delete post. Please try again.", "error");
+            }
+        });
 
         commentButton.addEventListener('click', () => {
             commentInput.focus()
@@ -369,15 +431,28 @@ document.addEventListener('DOMContentLoaded', async function () {
                 }
 
                 const commentContent = e.target.closest('.delete-comment').dataset.content;
-                if (confirm('Are you sure you want to delete this comment?')) {
-                    const result = await deleteComment(postId, commentContent);
-                    if (result) {
-                        const commentElement = e.target.closest('.comment');
-                        commentElement.remove();
 
-                        const currentComments = parseInt(commentsCount.textContent);
-                        commentsCount.textContent = `${currentComments - 1} comments`;
+                const confirmed = await showConfirmationBox(
+                    'Are you sure you want to delete this Comment?',
+                    {
+                        confirmText: 'Delete',
+                        cancelText: 'Cancel',
+                        confirmColor: '#ef233c',
+                        cancelColor: '#4361ee'
                     }
+                );
+
+                if (!confirmed) {
+                    return
+                }
+
+                const result = await deleteComment(postId, commentContent);
+                if (result) {
+                    const commentElement = e.target.closest('.comment');
+                    commentElement.remove();
+
+                    const currentComments = parseInt(commentsCount.textContent);
+                    commentsCount.textContent = `${currentComments - 1} comments`;
                 }
             }
         });

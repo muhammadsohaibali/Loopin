@@ -92,12 +92,15 @@
                         <div class="user-details">
                             <span class="username" id="postUsername">User Name</span>
                             <span class="post-time" id="postTime">Time ago</span>
-                            <span class="post-visibility" id="postVisibility"></span>
                         </div>
                     </div>
-                    <button class="btn-more" id="postMoreButton">
-                        <i class="fas fa-ellipsis-h"></i>
-                    </button>
+                    <div class="custom-styles-11">
+                        <span class="post-visibility" id="postVisibility"></span>
+                        <button class="btn-more" id="postDltButton">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                            <span>Delete</span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Post Content -->
@@ -156,6 +159,7 @@
         </div>
     </div>
 
+    <script src="/assets/public/js/components/confirmation.js"></script>
     <script src="/assets/public/js/components/notifier.js"></script>
     <script src="/assets/public/js/components/loader.js"></script>
     <script src="/assets/public/js/post.js"></script>
