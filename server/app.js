@@ -56,9 +56,9 @@ app.use("/api/posts/", require("./routes/posts"));
 app.use('/assets', express.static(path.join(__dirname, '../public/assets')));
 
 // ======================= SEO =======================
-// app.get('/google91c20151428a7824.html', (req, res) => {
-    // res.send('google-site-verification: google91c20151428a7824.html');
-// });
+app.get('/google91c20151428a7824.html', (req, res) => {
+    res.send('google-site-verification: google91c20151428a7824.html');
+});
 
 app.get('/robots.txt', (req, res) => {
     res.type('text/plain');
