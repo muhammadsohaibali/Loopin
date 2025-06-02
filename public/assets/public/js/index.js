@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', async function () {
 // CONSTANTS
 const DEFAULT_AVATAR = 'https://randomuser.me/api/portraits/lego/1.jpg';
 const POSTS_PER_LOAD = 20;
+let isLoading = false;
+let scrollTimeout;
 
 /**
  * Formats large numbers into shortened strings (e.g., 1500 -> 1.5K)
@@ -59,7 +61,7 @@ async function fetchHomepageData(run = 'all') {
         }
     } catch (error) {
         console.error('Error fetching homepage data:', error);
-        notify('Failed to load feed. Please try again.', 'error');
+        notify(`Failed: ${error}`, 'error');
     }
 }
 
@@ -255,13 +257,9 @@ function setupCreatePost() {
                 body: JSON.stringify({ content })
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to create post');
-            }
-
             const result = await response.json();
             if (result.message !== "Post created successfully") {
-                throw new Error(result.message || 'Failed to create post');
+                throw new Error(result.error);   
             }
 
             postInput.value = '';
@@ -272,7 +270,7 @@ function setupCreatePost() {
             console.error('Error creating post:', error);
             postButton.disabled = false;
             postButton.innerHTML = originalButtonHTML;
-            notify('Failed to create post. Please try again.', 'error');
+            notify(error, 'error');
         }
     });
 
@@ -344,12 +342,10 @@ async function logoutAll() {
         location.assign('/auth');
     } catch (err) {
         console.error('Logout failed:', err);
-        notify('Failed to logout. Please try again.', 'error');
+        notify(`Failed: ${error}`, 'error');
     }
 }
 
-// Infinite Scroll Implementation
-let isLoading = false;
 
 /**
  * Fetches additional posts for infinite scroll
@@ -458,7 +454,7 @@ async function handleLikeAction(likeBtn) {
         likeIcon.classList.toggle('far');
         likeIcon.classList.toggle('fas');
         likesCountEl.textContent = `${isLiked ? likesCount - 1 : likesCount + 1} ${likesCount === 1 ? 'like' : 'likes'}`;
-        notify('Failed to update like. Please try again.', 'error');
+        notify(`Failed: ${error}`, 'error');
     }
 }
 
@@ -480,6 +476,11 @@ async function handleShareAction(shareBtn) {
     const url = shareBtn.getAttribute('data-url');
     const originalHTML = shareBtn.innerHTML;
 
+    const post = shareBtn.closest('.post');
+    const postId = post.dataset.postId;
+
+    const sharesCount = post.querySelector('.shares-count');
+
     try {
         if (navigator.clipboard) {
             await navigator.clipboard.writeText(url);
@@ -491,16 +492,30 @@ async function handleShareAction(shareBtn) {
             document.execCommand("copy");
             document.body.removeChild(textarea);
         }
-        shareBtn.innerHTML = `<i class="fas fa-check"></i><span>Copied</span>`;
+
+        shareBtn.innerHTML = `<i class="fas fa-check"></i><span>Copied Link</span>`;
         setTimeout(() => shareBtn.innerHTML = originalHTML, 2000);
+
+        const res = await fetch('/api/posts/share', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ postId })
+        });
+
+        if (res.ok) {
+            const data = await res.json()
+            const addS = parseInt(sharesCount.textContent) <= 1 ? 'share' : 'shares'
+            if (data.message !== "You Already Shared.") {
+                sharesCount.textContent = `${parseInt(sharesCount.textContent) + 1} ${addS}`
+            }
+        }
+
     } catch (err) {
         console.error('Error sharing post:', err);
         notify('Failed to copy the link.', 'error');
     }
 }
 
-// Set up infinite scroll with debounce
-let scrollTimeout;
 window.addEventListener("scroll", () => {
     clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(() => {

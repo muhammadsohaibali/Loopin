@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="shortcut icon" href="/assets/imgs/icon.png" type="image/x-icon">
+    <link rel="stylesheet" href="/assets/public/css/components/404.css">
+    <title>Page Not Found - Loopin</title>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo-div" onclick="location.assign('/')">
+            <img src="/assets/imgs/icon.png" class="logo-img-custom" alt="">
+            <a class="logo">Loopin</a>
+        </div>
+        <div>
+            <a href="/auth" style="color: var(--primary); text-decoration: none; font-weight: 500;">Sign In</a>
+        </div>
+    </nav>
+
+    <main class="error-container">
+        <div class="error-card">
+            <h1 class="error-code">404</h1>
+            <h2 class="error-title">Connection Lost</h2>
+            <p class="error-message" id="error-message">
+                The page you're looking for doesn't exist or may have been moved.
+            </p>
+            <a href="/" class="home-btn">
+                <i class="fas fa-arrow-left"></i> Return to Loopin
+            </a>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2023 Loopin. All rights reserved.</p>
+    </footer>
+    
+    <script src="/assets/public/js/components/404.js"></script>
+</body>
+
+</html>

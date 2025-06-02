@@ -62,8 +62,14 @@ app.get('/post/:postId', authGate("post.html", "login.html"));
 app.get('/search', authGate("find-friends.html", "login.html"));
 
 // =================== 404 Not Found ===================
-app.use((req, res) => {
-    res.status(404).send("Page not found");
+app.use((req, res, next) => {
+    if (req.path === '/404.html')
+        return res.status(404).sendFile(path.join(__dirname, '../public', '404.html'));
+
+    const isHtmlRequest = req.path.endsWith('.html');
+    const errorType = isHtmlRequest ? 'html' : 'page';
+
+    res.status(404).redirect(`/404.html?q=${errorType}&path=${encodeURIComponent(req.path)}`);
 });
 
 // =================== Start Server ===================

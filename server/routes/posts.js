@@ -27,8 +27,15 @@ router.post("/post", async (req, res) => {
         }
 
         const { content, image, visibility = "Public" } = req.body;
+
         if (!content) {
             return res.status(400).json({ error: "Content is required" });
+        }
+
+        const alphabetCount = (content.match(/[a-zA-Z]/g) || []).length;
+
+        if (alphabetCount < 5) {
+            return res.status(400).json({ error: "Content must contain at least 5 alphabetic characters." });
         }
 
         const db = await connectDB();
@@ -52,8 +59,7 @@ router.post("/post", async (req, res) => {
             image: image || null,
             createdAt: new Date(),
             visibility,
-            sharesCount: 0,
-            isLiked: false,
+            shares: [],
             likes: [],
             comments: []
         };
@@ -134,6 +140,41 @@ router.delete("/post", async (req, res) => {
         res.status(200).json({ message: "Post deleted successfully" });
     } catch (error) {
         console.error("Error deleting post:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+router.post('/share', async (req, res) => {
+    try {
+        const user = await verifySession(req);
+        if (!user) {
+            return res.status(401).json({ error: "Unauthorized - Please log in" });
+        }
+
+        const { postId } = req.body;
+        if (!postId) {
+            return res.status(400).json({ error: "Post ID is required" });
+        }
+
+        const db = await connectDB();
+        const post = await db.collection('posts').findOne({ postId });
+
+        if (!post) {
+            return res.status(404).json({ error: "Post not found" });
+        }
+
+        if (post.shares && post.shares.includes(user.email)) {
+            return res.status(200).json({ message: "You Already Shared." });
+        }
+
+        await db.collection('posts').updateOne(
+            { postId },
+            { $addToSet: { shares: user.email } }
+        );
+
+        return res.status(200).json({ message: "Share recorded successfully." });
+    } catch (error) {
+        console.error("Error updating share:", error);
         res.status(500).json({ error: "Internal server error" });
     }
 });

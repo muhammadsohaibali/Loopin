@@ -38,6 +38,7 @@ async function fetchPosts(userEmail, limit = 10) {
                 $addFields: {
                     isLiked: { $in: [userEmail, '$likes'] },
                     likesCount: { $size: '$likes' },
+                    sharesCount: { $size: '$shares' },
                     commentsCount: { $size: '$comments' }
                 }
             },
@@ -132,6 +133,7 @@ router.get("/infinite-posts", async (req, res) => {
                 $addFields: {
                     isLiked: { $in: [user.email, '$likes'] },
                     likesCount: { $size: '$likes' },
+                    sharesCount: { $size: '$shares' },
                     commentsCount: { $size: '$comments' }
                 }
             },
@@ -173,6 +175,7 @@ router.get("/infinite-posts", async (req, res) => {
                     $addFields: {
                         isLiked: { $in: [user.email, '$likes'] },
                         likesCount: { $size: '$likes' },
+                        sharesCount: { $size: '$shares' },
                         commentsCount: { $size: '$comments' }
                     }
                 },

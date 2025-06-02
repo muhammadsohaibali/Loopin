@@ -21,19 +21,21 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     const currentUser = await fetchCurrentUser();
 
+    const DEFAULT_AVATAR = 'https://dummyimage.com/150x150/cccccc/969696';
+
     // Get post ID from URL
     function getPostIdFromURL(queryParamKey = null) {
         const url = new URL(window.location.href);
 
         if (queryParamKey) {
-            return url.searchParams.get(queryParamKey); // e.g. 'a' => 'c'
+            return url.searchParams.get(queryParamKey);
         }
 
         const pathSegments = url.pathname.split('/').filter(Boolean);
         const postIndex = pathSegments.indexOf('post');
 
         if (postIndex !== -1 && pathSegments.length > postIndex + 1) {
-            return pathSegments[postIndex + 1]; // normal postId
+            return pathSegments[postIndex + 1];
         }
 
         return null;
@@ -69,7 +71,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     // Fetch current user data (simplified - in a real app, you'd get this from your auth system)
     async function fetchCurrentUser() {
         try {
-            // This is a placeholder - replace with your actual user fetching logic
             const response = await fetch('/api/auth/current-user');
             if (!response.ok) return null;
             return await response.json();
@@ -82,11 +83,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     // Update like status via API
     async function updateLikeStatus(postId, isCurrentlyLiked) {
         try {
-            const response = await fetch('/like', {
+            const response = await fetch('/api/posts/like', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ postId })
             });
 
@@ -147,12 +146,11 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // Populate post data in the UI
     function populatePostData(post) {
-        postUserAvatar.src = post.avatar || 'https://dummyimage.com/150x150/cccccc/969696';
+        postUserAvatar.src = post.avatar || DEFAULT_AVATAR;
         postUsername.textContent = post.username;
         postTime.textContent = formatRelativeTime(post.createdAt);
         postText.textContent = post.content;
 
-        // Set visibility indicator
         let visibilityIcon, visibilityText;
         switch (post.visibility) {
             case 'private':
@@ -163,13 +161,12 @@ document.addEventListener('DOMContentLoaded', async function () {
                 visibilityIcon = 'fas fa-user-friends';
                 visibilityText = 'Visible to friends';
                 break;
-            default: // Public
+            default:
                 visibilityIcon = 'fas fa-globe';
                 visibilityText = 'Public';
         }
         postVisibility.innerHTML = `<i class="${visibilityIcon}"></i> ${visibilityText}`;
 
-        // Set post image
         if (post.image) {
             postImage.src = post.image;
             postImageContainer.style.display = 'flex';
@@ -177,12 +174,10 @@ document.addEventListener('DOMContentLoaded', async function () {
             postImageContainer.style.display = 'none';
         }
 
-        // Set post stats
         likesCount.textContent = `${post.likes.length} likes`;
         commentsCount.textContent = `${post.comments.length} comments`;
-        sharesCount.textContent = `${post.sharesCount} shares`;
+        sharesCount.textContent = `${post.shares.length} ${post.shares.length <= 1 ? 'share' : 'shares'}`;
 
-        // Set like button state
         if (post.isLiked) {
             likeButton.classList.add('active');
             likeButton.querySelector('i').classList.replace('far', 'fas');
@@ -191,7 +186,6 @@ document.addEventListener('DOMContentLoaded', async function () {
             likeButton.querySelector('i').classList.replace('fas', 'far');
         }
 
-        // Populate comments
         commentsList.innerHTML = '';
         const sortedComments = post.comments.slice().sort((a, b) => {
             const isAUser = a.username === currentUser.username;
@@ -213,7 +207,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             commentElement.className = 'comment';
             commentElement.innerHTML = `
                 <div class="comment-avatar">
-                    <img src="${comment.avatar || 'https://dummyimage.com/150x150/cccccc/969696'}" alt="Profile Picture">
+                    <img src="${comment.avatar || DEFAULT_AVATAR}" alt="Profile Picture">
                 </div>
                 <div class="comment-content">
                     <div class="comment-user">${comment.username}</div>
@@ -241,13 +235,10 @@ document.addEventListener('DOMContentLoaded', async function () {
             commentInput.focus();
 
         if (!postId) {
-            console.log('Invalid post URL');
             location.assign('/');
             return;
         }
 
-        // const currentUser = await fetchCurrentUser();
-        console.log(currentUser)
         if (currentUser && currentUser.avatarUrl && currentUser.username && currentUser.email) {
 
             currentUserAvatar.forEach(avatar => avatar.src = currentUser.avatarUrl)
@@ -255,22 +246,23 @@ document.addEventListener('DOMContentLoaded', async function () {
             currentUserDetails.children[0].textContent = currentUser.username
             currentUserDetails.children[1].textContent = currentUser.email
         } else {
-            currentUserAvatar.src = 'https://dummyimage.com/150x150/cccccc/969696';
+            currentUserAvatar.src = DEFAULT_AVATAR;
         }
 
         const postData = await fetchPostData(postId);
         if (!postData) {
-            console.log('Failed to load post');
             location.assign('/');
             return;
         }
 
         populatePostData(postData);
 
-        // Set up event listeners
+        commentButton.addEventListener('click', () => {
+            commentInput.focus()
+        })
+
         likeButton.addEventListener('click', async () => {
             if (!currentUser) {
-                console.log('Please log in to like posts');
                 return;
             }
 
@@ -286,40 +278,61 @@ document.addEventListener('DOMContentLoaded', async function () {
             }
         });
 
-        // Share button
-        shareButton.addEventListener('click', () => {
-            // In a real app, you would use the Web Share API or implement a custom share dialog
-            const postUrl = window.location.href;
-            navigator.clipboard.writeText(postUrl).then(() => {
-                console.log('Post link copied to clipboard!');
+        shareButton.addEventListener('click', async () => {
+            const originalHTML = shareButton.innerHTML;
+            const url = location.href;
 
-                // Increment share count in UI (in a real app, this would come from the API)
-                const currentShares = parseInt(sharesCount.textContent);
-                sharesCount.textContent = `${currentShares + 1} shares`;
-            }).catch(err => {
-                console.error('Failed to copy link:', err);
-                console.log('Failed to copy link. Please try again.');
-            });
+            try {
+                // Copy link to clipboard
+                if (navigator.clipboard) {
+                    await navigator.clipboard.writeText(url);
+                } else {
+                    const textarea = document.createElement("textarea");
+                    textarea.value = url;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand("copy");
+                    document.body.removeChild(textarea);
+                }
+
+                shareButton.innerHTML = `<i class="fas fa-check"></i><span>Copied Link</span>`;
+                setTimeout(() => shareButton.innerHTML = originalHTML, 2000);
+
+                const res = await fetch('/api/posts/share', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ postId })
+                });
+
+                if (res.ok) {
+                    const data = await res.json()
+                    const addS = parseInt(sharesCount.textContent) <= 1 ? 'share' : 'shares'
+                    if (data.message !== "You Already Shared.") {
+                        sharesCount.textContent = `${parseInt(sharesCount.textContent) + 1} ${addS}`
+                    }
+                }
+
+            } catch (err) {
+                console.error('Error sharing post:', err);
+                notify('Failed to copy the link.', 'error');
+            }
         });
 
-        // Post comment
         async function handlePostComment() {
             const content = commentInput.value.trim();
             if (!content) return;
 
             if (!currentUser) {
-                console.log('Please log in to comment');
                 return;
             }
 
             const result = await postNewComment(postId, content);
             if (result) {
-                // Add new comment to the UI
                 const commentElement = document.createElement('div');
                 commentElement.className = 'comment';
                 commentElement.innerHTML = `
                     <div class="comment-avatar">
-                        <img src="${currentUser.avatarUrl || 'https://dummyimage.com/150x150/cccccc/969696'}" alt="Profile Picture">
+                        <img src="${currentUser.avatarUrl || DEFAULT_AVATAR}" alt="Profile Picture">
                     </div>
                     <div class="comment-content">
                         <div class="comment-user">You</div>
@@ -335,16 +348,13 @@ document.addEventListener('DOMContentLoaded', async function () {
                 commentsList.prepend(commentElement);
                 commentInput.value = '';
 
-                // Update comments count
                 const currentComments = parseInt(commentsCount.textContent);
                 commentsCount.textContent = `${currentComments + 1} comments`;
 
-                // Scroll to the new comment
                 commentElement.scrollIntoView({ behavior: 'smooth' });
             }
         }
 
-        // Post comment on button click or Enter key
         postCommentButton.addEventListener('click', handlePostComment);
         commentInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
@@ -352,11 +362,9 @@ document.addEventListener('DOMContentLoaded', async function () {
             }
         });
 
-        // Delete comment (event delegation)
         commentsList.addEventListener('click', async (e) => {
             if (e.target.closest('.delete-comment')) {
                 if (!currentUser) {
-                    console.log('Please log in to delete comments');
                     return;
                 }
 
@@ -364,11 +372,9 @@ document.addEventListener('DOMContentLoaded', async function () {
                 if (confirm('Are you sure you want to delete this comment?')) {
                     const result = await deleteComment(postId, commentContent);
                     if (result) {
-                        // Remove comment from UI
                         const commentElement = e.target.closest('.comment');
                         commentElement.remove();
 
-                        // Update comments count
                         const currentComments = parseInt(commentsCount.textContent);
                         commentsCount.textContent = `${currentComments - 1} comments`;
                     }

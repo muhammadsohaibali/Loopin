@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/public/css/components/loader.css">
     <link rel="stylesheet" href="/assets/public/css/index.css">
     <link rel="stylesheet" href="/assets/public/css/chats.css">
     <title>Loopin - Chats</title>
@@ -17,8 +18,8 @@
     <div class="app-container">
         <!-- Left Sidebar Navigation -->
         <div class="sidebar-left">
-            <div class="logo">
-                <i class="fas fa-comments" style="color: #4361ee;"></i>
+            <div class="logo" onclick="location.assign('/')">
+                <img src="/assets/imgs/icon.png" class="logo-img-custom" alt="">
                 <h1>Loopin</h1>
             </div>
 
@@ -31,15 +32,15 @@
                     <i class="fas fa-comment-dots"></i>
                     <span>Chats</span>
                 </a>
-                <a href="/search" class="nav-item">
+                <a href="#search" class="nav-item">
                     <i class="fas fa-user-plus"></i>
                     <span>Find Friends</span>
                 </a>
-                <a href="/friends" class="nav-item">
+                <a href="#friends" class="nav-item">
                     <i class="fas fa-users"></i>
                     <span>Friends</span>
                 </a>
-                <a href="/me" class="nav-item">
+                <a href="#me" class="nav-item">
                     <i class="fas fa-user"></i>
                     <span>My Profile</span>
                 </a>
@@ -49,18 +50,17 @@
                 </a>
             </nav>
 
-            <div class="user-profile">
+            <div class="user-profile" onclick="logoutAll()">
                 <div class="avatar">
-                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile Picture">
+                    <img src="https://dummyimage.com/150x150/cccccc/969696" alt="Profile Picture">
                     <span class="online-status"></span>
                 </div>
                 <div class="user-info-div">
-                    <span class="username">JohnDoe</span>
-                    <span class="user-handle">johndoe@gmail.com</span>
+                    <span class="username">Username</span>
+                    <span class="user-handle">user@example.com</span>
                 </div>
             </div>
         </div>
-
 
         <!-- Chats Main Content -->
         <div class="chats-container">
