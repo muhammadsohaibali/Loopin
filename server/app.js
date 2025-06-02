@@ -6,8 +6,15 @@ const path = require('path');
 
 require("dotenv").config();
 
-const SERVER_ADDRESS = process.env.SERVER_ADDRESS || '192.168.100.4';
-const PORT = process.env.PORT || 3000;
+let SERVER_ADDRESS, PORT;
+
+if (process.env.NODE_ENV === 'development') {
+    SERVER_ADDRESS = '192.168.100.4';
+    PORT = 3000;
+} else {
+    SERVER_ADDRESS = process.env.SERVER_ADDRESS;
+    PORT = process.env.PORT;
+}
 
 const app = express();
 
@@ -46,10 +53,17 @@ app.use("/api/posts/", require("./routes/posts"));
 // ======================= Assets =======================
 app.use('/assets', express.static(path.join(__dirname, '../public/assets')));
 
-// ===================== Google SEO =====================
+// ======================= SEO =======================
 app.get('/google3be646e8a91de87f.html', (req, res) => {
     res.send('google-site-verification: google3be646e8a91de87f.html');
-}); 
+});
+
+app.get('/robots.txt', (req, res) => {
+    res.type('text/plain');
+    res.send(`User-agent: *
+        Allow: /
+            Sitemap: https://loopin-xha8.onrender.com/sitemap.xml`);
+});
 
 app.get('/sitemap.xml', require('./services/sitemap'))
 
@@ -81,5 +95,5 @@ app.use((req, res, next) => {
 
 // =================== Start Server ===================
 app.listen(PORT, () => {
-    console.log(`Server running on http://${SERVER_ADDRESS}:${PORT}`);
+    console.log(`Server running on ${SERVER_ADDRESS}:${PORT}`);
 });
