@@ -1,5 +1,6 @@
 const cookieParser = require("cookie-parser");
-const session = require("express-session");
+const session = require('express-session');
+const MongoStore = require('connect-mongo')
 const express = require('express');
 const cors = require("cors");
 const path = require('path');
@@ -23,19 +24,20 @@ app.set('trust proxy', 1);
 app.use(express.json());
 app.use(cookieParser());
 
-// app.use(cors({
-//     origin: process.env.SERVER_ADDRESS,
-//     credentials: true
-// }));
+app.use(cors({
+    origin: process.env.SERVER_ADDRESS,
+    credentials: true
+}));
 
-app.use(
-    session({
-        secret: process.env.SECRET_COOKIE_KEY,
-        resave: false,
-        saveUninitialized: true,
-        cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 },
-    })
-);
+app.use(session({
+    secret: process.env.SECRET_COOKIE_KEY,
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGO_URI,
+        ttl: 14 * 24 * 60 * 60
+    }),
+    resave: false,
+    saveUninitialized: false
+}));
 
 // ===================== Middlewares =====================
 const { authGate, unAuthOnlyPage } = require('./middlewares/redirect');
@@ -95,5 +97,9 @@ app.use((req, res, next) => {
 
 // =================== Start Server ===================
 app.listen(PORT, () => {
-    console.log(`Server running on ${SERVER_ADDRESS}:${PORT}`);
+    if (process.env.NODE_ENV === 'development') {
+        console.log(`Server running on ${SERVER_ADDRESS}:${PORT}`);
+    } else {
+        console.log(`Server running on ${PORT}`);
+    }
 });
