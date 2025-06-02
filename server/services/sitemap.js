@@ -13,11 +13,11 @@ router.get('/sitemap.xml', async (req, res) => {
         ];
 
         // const hostname = process.env.NODE_ENV === 'production'
-        //     ? 'https://loopin-xha8.onrender.com'
+        //     ? 'https://loopin-social-platform.onrender.com/'
         //     : 'http://localhost:3000';
 
         const stream = new SitemapStream({
-            hostname: 'https://loopin-xha8.onrender.com',
+            hostname: 'https://loopin-social-platform.onrender.com/',
             xmlns: {
                 news: false,
                 image: false,

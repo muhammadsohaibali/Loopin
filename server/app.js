@@ -64,7 +64,7 @@ app.get('/robots.txt', (req, res) => {
     res.type('text/plain');
     res.send(`User-agent: *
         Allow: /
-            Sitemap: https://loopin-xha8.onrender.com/sitemap.xml`);
+            Sitemap: https://loopin-social-platform.onrender.com/`);
 });
 
 app.get('/sitemap.xml', require('./services/sitemap'))
