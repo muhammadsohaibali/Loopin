@@ -1,0 +1,43 @@
+site_name: Loopin
+description: >
+  Loopin is a social media web app focused on connecting users through real-time messaging, friend feeds, and content sharing. 
+  The goal is to create a modern, intuitive, Gen Z-friendly user interface using only front-end technologies, while all backend 
+  logic and server-side functionality is handled separately.
+
+tech_stack:
+  - HTML5
+  - CSS3
+  - Vanilla JavaScript (No Frameworks)
+
+theme:
+  primary: "#4361ee"        # vibrant blue
+  secondary: "#3f37c9"      # deep blue
+  accent: "#4cc9f0"         # light blue
+  background: "#f8f9fa"     # light gray
+  text: "#212529"           # dark gray
+  white: "#ffffff"
+  error: "#ef233c"
+  success: "#4bb543"
+
+design_guidelines:
+  - Clean, modern UI/UX
+  - Gen Z-friendly look and feel
+  - Fully responsive (mobile + desktop)
+  - Semantic HTML5 structure
+  - Modular CSS (if possible)
+  - Use of white space, subtle shadows, and sharp typography
+  - No backend logic (API, database) in frontend code
+
+pages:
+  - Login Page
+  - Register Page
+  - Forgot Password Page
+  - Homepage (Feed)
+  - Chats Page (1-on-1 messaging)
+  - Find Users Page (search + send requests)
+  - Profile Page (Current user or any other user)
+  - MORE WILL BE ADDED TIME TO TIME AS REQUIRED
+
+notes: >
+  Frontend only. All server-side, backend APIs, database handling, auth logic, etc., will be added separately. 
+  Frontend JS can include basic interactivity like form validation, image previews, toggles, etc.

@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const cookieParser = require("cookie-parser");
-const bcrypt = require("bcrypt");
 require("dotenv").config();
 
 const { connectDB } = require('../config/mongo');

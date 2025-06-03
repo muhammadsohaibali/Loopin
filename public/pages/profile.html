@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Basic Setup -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+    <!-- SEO Meta Tags -->
+    <title>User Profile - Loopin</title>
+    <meta name="title" content="Loopin – A Light, Social Media Experience" />
+    <meta name="description"
+        content="Loopin is a simple, lightweight social platform where you can share thoughts, connect, and vibe without distractions. No downloads. No chaos. Just Loopin." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://loopin-social-platform.onrender.com/" />
+
+    <!-- Open Graph (for FB, WhatsApp, etc.) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://loopin-social-platform.onrender.com/" />
+    <meta property="og:title" content="Loopin – A Light, Social Media Experience" />
+    <meta property="og:description"
+        content="Loopin is your chill spot on the web to express, connect, and scroll without the noise." />
+    <meta property="og:image" content="https://loopin-social-platform.onrender.com/assets/imgs/preview.png" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="/assets/imgs/icon.png" type="image/png" />
+    <link rel="shortcut icon" href="/assets/imgs/icon.png" type="image/png" />
+
+    <!-- Fonts & Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/assets/public/css/components/notifier.css">
+    <link rel="stylesheet" href="/assets/public/css/components/loader.css">
+    <link rel="stylesheet" href="/assets/public/css/index.css">
+    <link rel="stylesheet" href="/assets/public/css/post.css">
+    <link rel="stylesheet" href="/assets/public/css/profile.css">
+</head>
+
+<body>
+    <div id="notify"></div>
+
+    <!-- <div class="loader-container" id="loader-container">
+        <div class="loader">
+            <img src="/assets/imgs/icon.png" alt="Website Logo" class="loader-logo">
+        </div>
+    </div> -->
+
+    <div class="app-container">
+        <!-- Left Sidebar Navigation -->
+        <div class="sidebar-left">
+            <div class="logo" onclick="location.assign('/')">
+                <img src="/assets/imgs/icon.png" class="logo-img-custom" alt="">
+                <h1>Loopin</h1>
+            </div>
+
+            <nav class="main-nav">
+                <a href="/" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="#search" class="nav-item">
+                    <i class="fas fa-search"></i>
+                    <span>Search</span>
+                </a>
+                <a href="/chats" class="nav-item">
+                    <i class="fas fa-comment-dots"></i>
+                    <span>Chats</span>
+                </a>
+                <a href="/me" class="nav-item">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="/?action=add-post" class="nav-item">
+                    <i class="fas fa-plus"></i>
+                    <span>New Post</span>
+                </a>
+                <a href="#notifications" class="nav-item">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                </a>
+            </nav>
+
+            <div class="user-profile" onclick="logoutAll()">
+                <div class="avatar">
+                    <img class="currentUserAvatar" src="https://dummyimage.com/150x150/cccccc/969696"
+                        alt="Profile Picture">
+                    <span class="online-status"></span>
+                </div>
+                <div class="user-info-div" id="user-info-div">
+                    <span class="username">Username</span>
+                    <span class="user-handle">user@example.com</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-container">
+            <!-- Header Section -->
+            <header class="profile-header">
+                <div class="header-content">
+                    <h1>Profile</h1>
+                    <button class="btn-edit">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Profile Info Section -->
+            <div class="profile-info-section">
+                <div class="profile-avatar-container">
+                    <img src="https://dummyimage.com/150x150/cccccc/969696" alt="Profile Picture"
+                        class="profile-avatar">
+                </div>
+                <div class="profile-details">
+                    <h2 class="profile-email">user@example.com</h2>
+                    <h1 class="profile-name">User Name</h1>
+                    <p class="profile-bio">This is a sample bio. User can write something about themselves here.</p>
+
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">0</span>
+                            <span class="stat-label">posts</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">19</span>
+                            <span class="stat-label">followers</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">33</span>
+                            <span class="stat-label">following</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Actions -->
+            <div class="profile-actions">
+                <button class="btn-action btn-edit-profile">
+                    <i class="fas fa-user-edit"></i>
+                    <span>Edit Profile</span>
+                </button>
+                <button class="btn-action btn-share-profile">
+                    <i class="fas fa-share-alt"></i>
+                    <span>Share Profile</span>
+                </button>
+            </div>
+
+            <!-- Posts Section -->
+            <div class="profile-posts-section">
+                <div class="posts-grid">
+                    <!-- Placeholder for empty state -->
+                    <div class="empty-posts">
+                        <div class="empty-content">
+                            <i class="fas fa-camera"></i>
+                            <h3>Add Posts</h3>
+                            <p>When you add posts, they will appear on your profile.</p>
+                            <button class="btn-primary">
+                                <i class="fas fa-plus"></i>
+                                <span>Share your first posts</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Sample post (hidden by default) -->
+                    <div class="post-detail-container">
+                        <div class="post-container">
+                            <!-- Post Header -->
+                            <div class="post-header">
+                                <div class="user-info">
+                                    <div class="avatar">
+                                        <img id="postUserAvatar" src="https://dummyimage.com/150x150/cccccc/969696"
+                                            alt="Profile Picture">
+                                        <span class="online-status" id="postUserStatus"></span>
+                                    </div>
+                                    <div class="user-details">
+                                        <span class="username" id="postUsername">User Name</span>
+                                        <span class="post-time" id="postTime">Time ago</span>
+                                    </div>
+                                </div>
+                                <div class="custom-styles-11">
+                                    <span class="post-visibility" id="postVisibility"></span>
+                                    <button class="btn-more" id="postDltButton">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                        <span>Delete</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Post Content -->
+                            <div class="post-content">
+                                <p id="postText"></p>
+                                <div class="post-image-container" id="postImageContainer">
+                                    <img id="postImage" src="https://dummyimage.com/800x400/cccccc/969696"
+                                        alt="Post image">
+                                </div>
+                            </div>
+
+                            <!-- Post Stats -->
+                            <div class="post-stats">
+                                <span class="likes-count" id="likesCount"></span>
+                                <span class="comments-count" id="commentsCount"></span>
+                                <span class="shares-count" id="sharesCount"></span>
+                            </div>
+
+                            <!-- Post Actions -->
+                            <div class="post-actions">
+                                <button class="btn-like" id="likeButton">
+                                    <i class="far fa-heart"></i>
+                                    <span>Like</span>
+                                </button>
+                                <button class="btn-comment" id="commentButton">
+                                    <i class="far fa-comment"></i>
+                                    <span>Comment</span>
+                                </button>
+                                <button class="btn-share" id="shareButton">
+                                    <i class="fas fa-share"></i>
+                                    <span>Share</span>
+                                </button>
+                            </div>
+
+                            <!-- Comments Section -->
+                            <div class="comments-section">
+                                <h3>Comments</h3>
+                                <div class="comments-list" id="commentsList">
+                                    <!-- Comments will be loaded here -->
+                                </div>
+
+                                <!-- Add Comment -->
+                                <div class="add-comment">
+                                    <div class="avatar">
+                                        <img class="currentUserAvatar"
+                                            src="https://dummyimage.com/150x150/cccccc/969696"
+                                            alt="Your Profile Picture">
+                                    </div>
+                                    <div class="comment-input-container">
+                                        <input type="text" id="commentInput" placeholder="Write a comment...">
+                                        <button class="btn-post-comment" id="postCommentButton">
+                                            <i class="fas fa-paper-plane"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/public/js/components/notifier.js"></script>
+    <script src="/assets/public/js/components/loader.js"></script>
+    <script src="/assets/public/js/profile.js"></script>
+</body>
+
+</html>

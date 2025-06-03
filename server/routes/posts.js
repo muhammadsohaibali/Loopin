@@ -34,8 +34,8 @@ router.post("/post", async (req, res) => {
 
         const alphabetCount = (content.match(/[a-zA-Z]/g) || []).length;
 
-        if (alphabetCount < 5) {
-            return res.status(400).json({ error: "Content must contain at least 5 alphabetic characters." });
+        if (alphabetCount < 1) {
+            return res.status(400).json({ error: "Content must contain at least 1 alphabetic characters." });
         }
 
         const db = await connectDB();

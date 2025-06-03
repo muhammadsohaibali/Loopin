@@ -4,6 +4,11 @@ const MongoStore = require('connect-mongo')
 const express = require('express');
 const cors = require("cors");
 const path = require('path');
+const { createServer } = require('http');
+const { Server } = require('socket.io');
+const { initializeChatSocket } = require('./routes/chats.js');
+
+const { connectDB } = require('./config/mongo');
 
 require("dotenv").config();
 
@@ -18,16 +23,27 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 const app = express();
+const httpServer = createServer(app);
+
+const io = new Server(httpServer);
+
+// const io = new Server(httpServer, {
+
+//     cors: {
+//         origin: process.env.SERVER_ADDRESS || "http://192.168.100.4:3000",
+//         methods: ["GET", "POST", "DELETE", "PATCH"]
+//     }
+// });
 
 app.set('trust proxy', 1);
 
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(cors({
-    origin: process.env.SERVER_ADDRESS,
-    credentials: true
-}));
+// app.use(cors({
+//     origin: process.env.SERVER_ADDRESS,
+//     credentials: true
+// }));
 
 app.use(session({
     secret: process.env.SECRET_COOKIE_KEY,
@@ -41,6 +57,7 @@ app.use(session({
 
 // ===================== Middlewares =====================
 const { authGate, unAuthOnlyPage } = require('./middlewares/redirect');
+require('./sockets/chatSocket')(io);
 
 // ======================= Routes =======================
 app.use("/api/auth/", require("./auth/user"));
@@ -50,6 +67,7 @@ app.use("/api/auth/", require("./auth/register"));
 app.use("/api/auth/", require("./auth/forgotpassword"));
 
 app.use("/api/", require("./routes/homepage"));
+app.use('/api/chats/', require('./routes/chats'));
 app.use("/api/posts/", require("./routes/posts"));
 
 // ======================= Assets =======================
@@ -63,8 +81,9 @@ app.get('/google91c20151428a7824.html', (req, res) => {
 app.get('/robots.txt', (req, res) => {
     res.type('text/plain');
     res.send(`User-agent: *
-        Allow: /
-            Sitemap: https://loopin-social-platform.onrender.com/`);
+Allow: /
+Sitemap: https://loopin-social-platform.onrender.com/sitemap.xml
+`);
 });
 
 app.get('/sitemap.xml', require('./services/sitemap'))
@@ -79,7 +98,7 @@ app.get('/auth/verification-email-sent', unAuthOnlyPage('verification-email-sent
 // ======================= Pages =======================
 app.get('/', authGate("index.html", "login.html"));
 app.get('/chats', authGate("chats.html", "login.html"));
-app.get('/me', authGate("my-profile.html", "login.html"));
+app.get('/me', authGate("profile.html", "login.html"));
 app.get('/friends', authGate("friends.html", "login.html"));
 app.get('/post/:postId', authGate("post.html", "login.html"));
 app.get('/search', authGate("find-friends.html", "login.html"));
@@ -96,7 +115,7 @@ app.use((req, res, next) => {
 });
 
 // =================== Start Server ===================
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
     if (process.env.NODE_ENV === 'development') {
         console.log(`Server running on ${SERVER_ADDRESS}:${PORT}`);
     } else {

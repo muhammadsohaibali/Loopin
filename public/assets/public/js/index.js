@@ -1,6 +1,10 @@
 document.addEventListener('DOMContentLoaded', async function () {
     await fetchHomepageData();
     await setupCreatePost();
+
+    if (getPostIdFromURL('action') === 'add-post') {
+        newPost()
+    }
     showLoader(false);
 });
 
@@ -25,6 +29,27 @@ const formatCount = n => {
     }
     return (+n.toFixed(1)).toString().replace(/\.0$/, '') + units[i];
 };
+
+function newPost() {
+    document.querySelector('.create-post input').focus();
+}
+
+function getPostIdFromURL(queryParamKey = null) {
+    const url = new URL(window.location.href);
+
+    if (queryParamKey) {
+        return url.searchParams.get(queryParamKey);
+    }
+
+    const pathSegments = url.pathname.split('/').filter(Boolean);
+    const postIndex = pathSegments.indexOf('post');
+
+    if (postIndex !== -1 && pathSegments.length > postIndex + 1) {
+        return pathSegments[postIndex + 1];
+    }
+
+    return null;
+}
 
 /**
  * Fetches homepage data from the backend
@@ -259,7 +284,7 @@ function setupCreatePost() {
 
             const result = await response.json();
             if (result.message !== "Post created successfully") {
-                throw new Error(result.error);   
+                throw new Error(result.error);
             }
 
             postInput.value = '';

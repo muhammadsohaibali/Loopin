@@ -26,7 +26,7 @@ router.get('/sitemap.xml', async (req, res) => {
         });
 
         res.header('Content-Type', 'application/xml');
-        // res.header('Cache-Control', 'public, max-age=3600');
+        res.header('Cache-Control', 'public, max-age=3600');
         res.header('X-Robots-Tag', 'noindex');
 
         stream.pipe(res);

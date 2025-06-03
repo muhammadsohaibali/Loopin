@@ -52,25 +52,25 @@
                     <i class="fas fa-home"></i>
                     <span>Home</span>
                 </a>
-                <a href="/chats" class="nav-item active">
+                <a href="#search" class="nav-item">
+                    <i class="fas fa-search"></i>
+                    <span>Search</span>
+                </a>
+                <a href="/chats" class="nav-item">
                     <i class="fas fa-comment-dots"></i>
                     <span>Chats</span>
                 </a>
-                <a href="#search" class="nav-item">
-                    <i class="fas fa-user-plus"></i>
-                    <span>Find Friends</span>
-                </a>
-                <a href="#friends" class="nav-item">
-                    <i class="fas fa-users"></i>
-                    <span>Friends</span>
-                </a>
-                <a href="#me" class="nav-item">
+                <a href="/me" class="nav-item">
                     <i class="fas fa-user"></i>
-                    <span>My Profile</span>
+                    <span>Profile</span>
                 </a>
-                <a href="#settings" class="nav-item">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
+                <a href="/?action=add-post" class="nav-item">
+                    <i class="fas fa-plus"></i>
+                    <span>New Post</span>
+                </a>
+                <a href="#notifications" class="nav-item">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
                 </a>
             </nav>
 
@@ -103,95 +103,14 @@
                 </div>
 
                 <div class="conversations">
-                    <!-- Conversation 1 (Active) -->
-                    <div class="conversation active">
-                        <div class="avatar">
-                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile Picture">
-                            <span class="online-status"></span>
-                        </div>
-                        <div class="conversation-info">
-                            <div class="conversation-header">
-                                <span class="username">Sarah Smith</span>
-                                <span class="time">12:30 PM</span>
-                            </div>
-                            <div class="last-message">
-                                <p>Hey! How about we meet this weekend?</p>
-                                <span class="unread-count">2</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Conversation 2 -->
-                    <div class="conversation">
-                        <div class="avatar">
-                            <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="Profile Picture">
-                        </div>
-                        <div class="conversation-info">
-                            <div class="conversation-header">
-                                <span class="username">Mike Johnson</span>
-                                <span class="time">10:15 AM</span>
-                            </div>
-                            <div class="last-message">
-                                <p>Did you see the game last night?</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Conversation 3 -->
-                    <div class="conversation">
-                        <div class="avatar">
-                            <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Profile Picture">
-                            <span class="online-status"></span>
-                        </div>
-                        <div class="conversation-info">
-                            <div class="conversation-header">
-                                <span class="username">Emma Wilson</span>
-                                <span class="time">Yesterday</span>
-                            </div>
-                            <div class="last-message">
-                                <p>Thanks for the recommendation!</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Conversation 4 -->
-                    <div class="conversation">
-                        <div class="avatar">
-                            <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Profile Picture">
-                        </div>
-                        <div class="conversation-info">
-                            <div class="conversation-header">
-                                <span class="username">David Brown</span>
-                                <span class="time">Monday</span>
-                            </div>
-                            <div class="last-message">
-                                <p>Let me know when you're free</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Conversation 5 -->
-                    <div class="conversation">
-                        <div class="avatar">
-                            <img src="https://randomuser.me/api/portraits/women/33.jpg" alt="Profile Picture">
-                            <span class="online-status"></span>
-                        </div>
-                        <div class="conversation-info">
-                            <div class="conversation-header">
-                                <span class="username">Lisa Taylor</span>
-                                <span class="time">Jun 12</span>
-                            </div>
-                            <div class="last-message">
-                                <p>The documents are ready for review</p>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Will be populated by loadConversations() -->
                 </div>
             </div>
 
             <!-- Active Chat -->
             <div class="active-chat">
                 <div class="chat-header">
+                    <div class="mobile-back-container"></div>
                     <div class="user-info">
                         <div class="avatar">
                             <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile Picture">
@@ -284,6 +203,8 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/asmCrypto/2.3.2/asmcrypto.all.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="/assets/public/js/chats.js"></script>
 </body>
 

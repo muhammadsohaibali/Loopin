@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 require("dotenv").config();
 
 const { connectDB } = require('../config/mongo');
-const authMiddleware = require('../middlewares/auth');
+const { authMiddleware } = require('../middlewares/auth');
 
 router.use(cookieParser());
 

@@ -1,27 +1,3 @@
-// const { MongoClient, ObjectId } = require("mongodb");
-// require("dotenv").config();
-
-// const uri = process.env.MONGO_URI;
-// const client = new MongoClient(uri);
-
-// let dbInstance;
-
-// async function connectDB() {
-//     if (!dbInstance) {
-//         try {
-//             await client.connect();
-//             dbInstance = client.db("Loopin");
-//             console.log("Connected to MongoDB");
-//         } catch (err) {
-//             console.error("MongoDB connection error:", err);
-//             throw err;
-//         }
-//     }
-//     return dbInstance;
-// }
-
-// module.exports = { connectDB, ObjectId };
-
 const { MongoClient, ObjectId } = require("mongodb");
 require("dotenv").config();
 
