@@ -4,9 +4,7 @@ const MongoStore = require('connect-mongo')
 const express = require('express');
 const cors = require("cors");
 const path = require('path');
-const { createServer } = require('http');
-const { Server } = require('socket.io');
-const { initializeChatSocket } = require('./routes/chats.js');
+const app = express();
 
 const { connectDB } = require('./config/mongo');
 
@@ -21,19 +19,6 @@ if (process.env.NODE_ENV === 'development') {
     SERVER_ADDRESS = process.env.SERVER_ADDRESS;
     PORT = process.env.PORT;
 }
-
-const app = express();
-const httpServer = createServer(app);
-
-const io = new Server(httpServer);
-
-// const io = new Server(httpServer, {
-
-//     cors: {
-//         origin: process.env.SERVER_ADDRESS || "http://192.168.100.4:3000",
-//         methods: ["GET", "POST", "DELETE", "PATCH"]
-//     }
-// });
 
 app.set('trust proxy', 1);
 
@@ -55,9 +40,11 @@ app.use(session({
     saveUninitialized: false
 }));
 
+// ===================== Database =====================
+connectDB();
+
 // ===================== Middlewares =====================
 const { authGate, unAuthOnlyPage } = require('./middlewares/redirect');
-require('./sockets/chatSocket')(io);
 
 // ======================= Routes =======================
 app.use("/api/auth/", require("./auth/user"));
@@ -67,7 +54,6 @@ app.use("/api/auth/", require("./auth/register"));
 app.use("/api/auth/", require("./auth/forgotpassword"));
 
 app.use("/api/", require("./routes/homepage"));
-app.use('/api/chats/', require('./routes/chats'));
 app.use("/api/posts/", require("./routes/posts"));
 
 // ======================= Assets =======================
@@ -115,7 +101,7 @@ app.use((req, res, next) => {
 });
 
 // =================== Start Server ===================
-httpServer.listen(PORT, () => {
+app.listen(PORT, () => {
     if (process.env.NODE_ENV === 'development') {
         console.log(`Server running on ${SERVER_ADDRESS}:${PORT}`);
     } else {
