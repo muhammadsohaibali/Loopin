@@ -18,6 +18,7 @@
 * {
     margin: 0;
     padding: 0;
+    scrollbar-width: thin;
     box-sizing: border-box;
     font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
 }
@@ -62,6 +63,7 @@ body {
     position: sticky;
     top: 0;
     overflow-y: auto;
+    scrollbar-width: thin;
 }
 
 /* ===== Left Sidebar Styles ===== */

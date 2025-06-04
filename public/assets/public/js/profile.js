@@ -4,9 +4,10 @@ document.addEventListener('DOMContentLoaded', async function () {
     const username = getUsernameFromURL()
     const user = await fetchUser(username);
     const userPosts = await fetchUserPosts(username)
+    // const isCurrentUser = fetchIsCurrentUser()
 
     if (!user.success && user.message === 'User Not Found') {
-        this.location.assign(`/404.html?q=user&path=${username}`)
+        this.location.assign(`/404?q=user&path=${username}`)
         return;
     } else if (!user.success && user.message === "User Account Is Private") {
         console.log("user is private")
@@ -15,6 +16,8 @@ document.addEventListener('DOMContentLoaded', async function () {
     } else {
         await loadUserDetails(user)
         await loadUserPosts(userPosts)
+
+        showLoader(false)
     }
 
     function getElements() {
@@ -74,6 +77,10 @@ document.addEventListener('DOMContentLoaded', async function () {
                 list: document.querySelector('#commentsList'),
                 input: document.querySelector('#commentInput'),
                 postButton: document.querySelector('#postCommentButton'),
+            },
+
+            onlyCurrentUser: {
+                settingsBtn: document.querySelector()
             }
         };
     }
@@ -95,9 +102,28 @@ document.addEventListener('DOMContentLoaded', async function () {
         return null;
     }
 
+    const fetchIsCurrentUser = () => {
+        const currentUser = fetchCurrentUser()
+        if ((currentUser.username === user.username) && currentUser.fullName === user.fullName) {
+            return true;
+        }
+        return false
+    }
+
     async function fetchUser(username) {
         try {
             const response = await fetch(`/api/auth/get-user/?username=${username}`);
+            if (!response.ok) return null;
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching current user:', error);
+            return null;
+        }
+    }
+
+    async function fetchCurrentUser() {
+        try {
+            const response = await fetch('/api/auth/current-user');
             if (!response.ok) return null;
             return await response.json();
         } catch (error) {
@@ -145,7 +171,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         const el = getElements()
         const profileDetails = el.profileDetails;
         profileDetails.stats.posts.textContent = posts.length;
-        
+
         console.log(posts)
     }
 })
