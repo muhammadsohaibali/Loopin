@@ -19,16 +19,16 @@ async function verifySession(req) {
 }
 
 // Fetch posts with pagination
-async function fetchPosts(userEmail, limit = 10) {
+async function fetchPosts(username, limit = 10) {
     try {
         const db = await connectDB();
-        const friendEmails = await getUserFollowingEmails(userEmail);
-        const targetEmails = [userEmail, ...friendEmails];
+        const followingUsername = await getUserFollowingUsernames(username);
+        const targetUsername = [username, ...followingUsername];
 
         return await db.collection('posts').aggregate([
             {
                 $match: {
-                    author: { $in: targetEmails },
+                    author: { $in: targetUsername },
                     visibility: { $ne: 'private' }
                 }
             },
@@ -36,7 +36,7 @@ async function fetchPosts(userEmail, limit = 10) {
             { $limit: limit },
             {
                 $addFields: {
-                    isLiked: { $in: [userEmail, '$likes'] },
+                    isLiked: { $in: [username, '$likes'] },
                     likesCount: { $size: '$likes' },
                     sharesCount: { $size: '$shares' },
                     commentsCount: { $size: '$comments' }
@@ -46,7 +46,7 @@ async function fetchPosts(userEmail, limit = 10) {
                 $project: {
                     postId: 1,
                     author: 1,
-                    username: 1,
+                    fullName: 1,
                     avatar: 1,
                     content: 1,
                     image: 1,
@@ -66,18 +66,17 @@ async function fetchPosts(userEmail, limit = 10) {
 }
 
 // Fetch online following users (replaces fetchOnlineFriends)
-async function fetchOnlineFollowing(userEmail, limit = 15) {
+async function fetchFollowing(username, limit = 35) {
     try {
         const db = await connectDB();
-        const followingEmails = await getUserFollowingEmails(userEmail);
-        if (!followingEmails.length) return [];
+        const followingUsername = await getUserFollowingUsernames(username);
+        if (!followingUsername.length) return [];
 
         return await db.collection('users').find(
             {
-                email: { $in: followingEmails },
-                isOnline: true
+                username: { $in: followingUsername },
             },
-            { projection: { username: 1, avatarUrl: 1, lastActive: 1, email: 1 } }
+            { projection: { username: 1, fullName: 1, avatarUrl: 1, lastActive: 1 } }
         )
             .sort({ lastActive: -1 })
             .limit(limit)
@@ -88,16 +87,16 @@ async function fetchOnlineFollowing(userEmail, limit = 15) {
     }
 }
 
-async function getUserFollowingEmails(email) {
+async function getUserFollowingUsernames(username) {
     try {
         const db = await connectDB();
         const user = await db.collection('users').findOne(
-            { email },
+            { username },
             { projection: { following: 1, _id: 0 } }
         );
         return user?.following || [];
     } catch (err) {
-        console.error('Error fetching following emails:', err);
+        console.error('Error fetching following username:', err);
         return [];
     }
 }
@@ -131,7 +130,7 @@ router.get("/infinite-posts", async (req, res) => {
             { $sample: { size: limit * 2 } }, // sample more to filter unseen
             {
                 $addFields: {
-                    isLiked: { $in: [user.email, '$likes'] },
+                    isLiked: { $in: [user.username, '$likes'] },
                     likesCount: { $size: '$likes' },
                     sharesCount: { $size: '$shares' },
                     commentsCount: { $size: '$comments' }
@@ -141,7 +140,7 @@ router.get("/infinite-posts", async (req, res) => {
                 $project: {
                     postId: 1,
                     author: 1,
-                    username: 1,
+                    fullName: 1,
                     avatar: 1,
                     content: 1,
                     image: 1,
@@ -173,7 +172,7 @@ router.get("/infinite-posts", async (req, res) => {
                 { $sample: { size: limit } },
                 {
                     $addFields: {
-                        isLiked: { $in: [user.email, '$likes'] },
+                        isLiked: { $in: [user.username, '$likes'] },
                         likesCount: { $size: '$likes' },
                         sharesCount: { $size: '$shares' },
                         commentsCount: { $size: '$comments' }
@@ -183,7 +182,7 @@ router.get("/infinite-posts", async (req, res) => {
                     $project: {
                         postId: 1,
                         author: 1,
-                        username: 1,
+                        fullName: 1,
                         avatar: 1,
                         content: 1,
                         image: 1,
@@ -228,8 +227,8 @@ router.get("/homepage-data", async (req, res) => {
 
         // Fetch data in parallel - now using following instead of friends
         const [posts, onlineFollowing] = await Promise.all([
-            fetchPosts(user.email),
-            fetchOnlineFollowing(user.email)
+            fetchPosts(user.username),
+            fetchFollowing(user.username)
         ]);
 
         // Prepare response
@@ -238,14 +237,14 @@ router.get("/homepage-data", async (req, res) => {
             data: {
                 user: {
                     username: user.username,
-                    email: user.email,
+                    fullName: user.fullName,
                     avatar: user.avatarUrl,
                     settings: user.Settings
                 },
                 posts: posts.map(post => ({
                     postId: post.postId,
                     author: post.author,
-                    username: post.username,
+                    fullName: post.fullName,
                     avatar: post.avatar,
                     content: post.content,
                     image: post.image,
@@ -257,8 +256,9 @@ router.get("/homepage-data", async (req, res) => {
                     commentsCount: post.commentsCount
                 })),
                 onlineFollowing: onlineFollowing.map(following => ({
-                    email: following.email,
                     username: following.username,
+                    fullName: following.fullName,
+                    following: following.following,
                     avatar: following.avatarUrl,
                     lastActive: following.lastActive
                 }))

@@ -184,6 +184,32 @@ if (registerForm) {
     }
 }
 
+const input = document.getElementById('birthdate');
+
+input.addEventListener('input', (e) => {
+    let value = input.value.replace(/\D/g, ''); // only digits
+    if (value.length > 6) value = value.slice(0, 6);
+
+    let formatted = '';
+    if (value.length >= 1) formatted += value.substring(0, 2);
+    if (value.length >= 3) formatted += '/' + value.substring(2, 4);
+    if (value.length >= 5) formatted += '/' + value.substring(4, 6);
+
+    input.value = formatted;
+});
+
+input.addEventListener('focus', () => {
+    if (input.value === '') {
+        input.placeholder = 'DD/MM/YY';
+    }
+});
+
+input.addEventListener('blur', () => {
+    if (input.value === '') {
+        input.placeholder = 'DD/MM/YY';
+    }
+});
+
 // Toggle password visibility for confirm password field
 const togglePassword = document.getElementById('togglePassword');
 if (togglePassword) {

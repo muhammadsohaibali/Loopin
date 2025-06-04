@@ -40,14 +40,18 @@ const validatePakistaniNumber = (num) =>
 
 // // ─── Register Route ──────────────────────────────────────────────────────────
 router.post("/register", async (req, res) => {
-    const { username, email, phone, password, birthdate } = req.body;
+    const { username, fullName, email, phone, password, birthdate } = req.body;
 
-    if (!username || !email || !phone || !password) {
+    if (!username || !fullName || !email || !phone || !password) {
         return res.status(400).json({ error: "All fields are required" });
     }
 
     if (username.length > 20) {
         return res.status(400).json({ error: "Username Can't Exceed 20 Chars" });
+    }
+
+    if (fullName.length > 25) {
+        return res.status(400).json({ error: "Full Name Can't Exceed 25 Chars" });
     }
 
     if (!validateEmail(email)) {
@@ -73,6 +77,7 @@ router.post("/register", async (req, res) => {
 
         const newUser = {
             username,
+            fullName,
             email,
             phone: normalizedPhone,
             password: hashedPassword,
@@ -84,7 +89,7 @@ router.post("/register", async (req, res) => {
 
         await users.insertOne(newUser);
 
-        await sendNodeMail(email, "Verify Your Email - NexaEase", EmailVerificationTemplate(otp, email, username))
+        await sendNodeMail(email, "Verify Your Email - NexaEase", EmailVerificationTemplate(otp, email, fullName))
 
         return res.status(201).json({ message: "Verification link sent to email" });
     } catch (err) {
@@ -118,7 +123,7 @@ router.post("/send-verification-link", async (req, res) => {
 
         await users.updateOne({ email: identifier }, { $set: { otp } });
 
-        await sendNodeMail(identifier, "Verify Your Email - NexaEase", EmailVerificationTemplate(otp, identifier, user.username));
+        await sendNodeMail(identifier, "Verify Your Email - NexaEase", EmailVerificationTemplate(otp, identifier, user.fullName));
 
         return res.status(200).json({
             redirect: "/auth/verification-email-sent",

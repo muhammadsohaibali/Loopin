@@ -84,20 +84,20 @@ app.get('/auth/verification-email-sent', unAuthOnlyPage('verification-email-sent
 // ======================= Pages =======================
 app.get('/', authGate("index.html", "login.html"));
 app.get('/chats', authGate("chats.html", "login.html"));
-app.get('/me', authGate("profile.html", "login.html"));
+app.get('/profile/:uid', authGate("profile.html", "login.html"));
 app.get('/friends', authGate("friends.html", "login.html"));
 app.get('/post/:postId', authGate("post.html", "login.html"));
 app.get('/search', authGate("find-friends.html", "login.html"));
 
 // =================== 404 Not Found ===================
 app.use((req, res, next) => {
-    if (req.path === '/404.html')
+    if (req.path === '/404')
         return res.status(404).sendFile(path.join(__dirname, '../public', '404.html'));
 
     const isHtmlRequest = req.path.endsWith('.html');
     const errorType = isHtmlRequest ? 'html' : 'page';
 
-    res.status(404).redirect(`/404.html?q=${errorType}&path=${encodeURIComponent(req.path)}`);
+    res.status(404).redirect(`/404?q=${errorType}&path=${encodeURIComponent(req.path)}`);
 });
 
 // =================== Start Server ===================

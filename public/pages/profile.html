@@ -6,6 +6,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
+    <!-- Canonical -->
+    <link rel="canonical" href="https://loopin-social-platform.onrender.com/profile" />
+
     <!-- SEO Meta Tags -->
     <title>User Profile - Loopin</title>
     <meta name="title" content="Loopin – A Light, Social Media Experience" />
@@ -68,10 +71,6 @@
                     <i class="fas fa-comment-dots"></i>
                     <span>Chats</span>
                 </a>
-                <a href="/me" class="nav-item">
-                    <i class="fas fa-user"></i>
-                    <span>Profile</span>
-                </a>
                 <a href="/?action=add-post" class="nav-item">
                     <i class="fas fa-plus"></i>
                     <span>New Post</span>
@@ -110,8 +109,8 @@
             <!-- Profile Info Section -->
             <div class="profile-info-section">
                 <div class="profile-avatar-container">
-                    <img src="https://dummyimage.com/150x150/cccccc/969696" alt="Profile Picture"
-                        class="profile-avatar">
+                    <img id="profile-avatar-container" src="https://dummyimage.com/150x150/cccccc/969696"
+                        alt="Profile Picture" class="profile-avatar">
                 </div>
                 <div class="profile-details">
                     <h2 class="profile-email">user@example.com</h2>
@@ -199,9 +198,9 @@
 
                             <!-- Post Stats -->
                             <div class="post-stats">
-                                <span class="likes-count" id="likesCount"></span>
-                                <span class="comments-count" id="commentsCount"></span>
-                                <span class="shares-count" id="sharesCount"></span>
+                                <span class="likes-count" id="likesCount">2 likes</span>
+                                <span class="comments-count" id="commentsCount">34 comments</span>
+                                <span class="shares-count" id="sharesCount">13 shares</span>
                             </div>
 
                             <!-- Post Actions -->

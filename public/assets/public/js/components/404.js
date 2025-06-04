@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if (queryType === 'html' && displayPath.endsWith('.html')) {
             errorMessageEl.innerHTML = `The HTML file <strong>"${displayPath}"</strong> wasn't found.`;
         }
+        if (queryType === 'user') {
+            errorMessageEl.innerHTML = `The User <strong>"${displayPath}"</strong> wasn't found.`;
+        }
         else if (cleanPath) {
             errorMessageEl.innerHTML = `The page <strong>"${friendlyPath}"</strong> couldn't be found.`;
         }

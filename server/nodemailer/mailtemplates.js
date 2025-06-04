@@ -43,7 +43,7 @@ function otpTemplate(otp) {
   `;
 }
 
-function EmailVerificationTemplate(otp, email, username = "User", verifyUrl = null) {
+function EmailVerificationTemplate(otp, email, fullName = "User Name", verifyUrl = null) {
   verifyUrl
     = `http://${process.env.SERVER_ADDRESS}:${process.env.PORT}/auth/verify-email?email=${encodeURIComponent(email)}&otp=${otp}`
   return `
@@ -60,7 +60,7 @@ function EmailVerificationTemplate(otp, email, username = "User", verifyUrl = nu
           <table width="100%" max-width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff; padding: 40px; border-radius: 10px;">
             <tr>
               <td align="center" style="font-size:24px; font-weight:bold; color:#333;">
-                Welcome to <span style="color:#007BFF;">Loopin</span>, ${username}!
+                Welcome to <span style="color:#007BFF;">Loopin</span>, ${fullName}!
               </td>
             </tr>
             <tr>

@@ -6,6 +6,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
+    <!-- Canonical -->
+    <link rel="canonical" href="https://loopin-social-platform.onrender.com/auth/register" />
+
     <!-- SEO Meta Tags -->
     <title>Loopin - Register</title>
     <meta name="title" content="Loopin – A Light, Social Media Experience" />
@@ -97,7 +100,8 @@
                     <label for="birthdate">Date of Birth</label>
                     <div class="input-with-icon">
                         <i class="fas fa-calendar"></i>
-                        <input type="date" id="birthdate" name="birthdate" required>
+                        <input type="text" id="birthdate" name="birthdate" maxlength="8" inputmode="numeric"
+                            autocomplete="off" value="DD/MM/YY" />
                     </div>
                 </div>
 

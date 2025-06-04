@@ -31,7 +31,8 @@ const formatCount = n => {
 };
 
 function newPost() {
-    document.querySelector('.create-post input').focus();
+    const postInput = document.querySelector('.create-post input')
+    postInput.focus();
 }
 
 function getPostIdFromURL(queryParamKey = null) {
@@ -100,6 +101,8 @@ function populateUserInfo(user) {
     const userProfile = document.querySelector('.user-profile');
     if (!userProfile) return;
 
+    userProfile.onclick = () => location.assign(`/profile/${user.username}`)
+
     const avatarImages = [
         userProfile.querySelector('.avatar img'),
         document.querySelector('#user-profile-img')
@@ -107,14 +110,14 @@ function populateUserInfo(user) {
 
     avatarImages.forEach(img => {
         img.src = user.avatar || DEFAULT_AVATAR;
-        img.alt = `${user.username}'s profile picture`;
+        img.alt = `${user.fullName}'s profile picture`;
     });
 
     const usernameEl = userProfile.querySelector('.username');
     const userHandleEl = userProfile.querySelector('.user-handle');
 
-    if (usernameEl) usernameEl.textContent = user.username || '';
-    if (userHandleEl) userHandleEl.textContent = user.email || '';
+    if (usernameEl) usernameEl.textContent = user.fullName || '';
+    if (userHandleEl) userHandleEl.textContent = user.username || '';
 
     const onlineStatus = userProfile.querySelector('.online-status');
     if (onlineStatus) {
@@ -131,14 +134,14 @@ function createPostHTML(post) {
     return `
         <div class="post" data-post-id="${post.postId}">
             <div class="post-header">
-                <div class="user-info">
+                <div class="user-info" onclick="location.assign('/profile/${post.author}')">
                     <div class="avatar">
                         <img src="${post.avatar || DEFAULT_AVATAR}" 
-                             alt="${post.username}'s profile picture">
+                             alt="${post.fullName}'s profile picture">
                         ${post.authorIsOnline ? '<span class="online-status"></span>' : ''}
                     </div>
                     <div class="user-details">
-                        <span class="username">${post.username}</span>
+                        <span class="username">${post.fullName}</span>
                         <span class="post-time">${formatPostTime(post.createdAt)}</span>
                     </div>
                 </div>
@@ -228,24 +231,24 @@ function populateOnlineFollowing(following) {
     following.forEach(user => {
         const userEl = document.createElement('div');
         userEl.className = 'following-user';
-        userEl.dataset.userEmail = user.email;
+        userEl.dataset.username = user.username;
 
         userEl.innerHTML = `
             <div class="friend">
                 <div class="avatar">
                     <img src="${user.avatar || DEFAULT_AVATAR}" 
-                        alt="${user.username}'s profile picture">
+                        alt="${user.fullName}'s profile picture">
                     <span class="online-status"></span>
                 </div>
                 <div class="friend-info">
-                    <span class="username">${user.username}</span>
+                    <span class="username">${user.fullName}</span>
                     <span class="status">${formatLastActive(user.lastActive)}</span>
                 </div>
             </div>
         `;
 
         userEl.addEventListener('click', () => {
-            location.assign(`#profile?user=${encodeURIComponent(user.email)}`);
+            location.assign(`/profile/${encodeURIComponent(user.username)}`);
         });
 
         onlineFollowingContainer.appendChild(userEl);

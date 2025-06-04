@@ -18,6 +18,15 @@ async function verifySession(req) {
     return user;
 }
 
+function sanitizePost(post) {
+    const {
+        _id,
+        postId,
+        visibility,
+        ...filtered } = post;
+    return filtered;
+}
+
 // Create a new post
 router.post("/post", async (req, res) => {
     try {
@@ -42,18 +51,17 @@ router.post("/post", async (req, res) => {
         const postsCollection = db.collection('posts');
         const usersCollection = db.collection('users');
 
-        async function generatePostId(email) {
-            const username = email.split('@')[0];
+        async function generatePostId(username) {
             const hash = await bcrypt.hash(username, 4);
             return Date.now().toString(36) + hash.replace(/\W/g, '').slice(-10);
         }
 
-        const postId = await generatePostId(user.email)
+        const postId = await generatePostId(user.username)
 
         const newPost = {
             postId,
-            author: user.email,
-            username: user.username,
+            author: user.username,
+            fullName: user.fullName,
             avatar: user.avatarUrl,
             content,
             image: image || null,
@@ -67,7 +75,7 @@ router.post("/post", async (req, res) => {
         await postsCollection.insertOne(newPost);
 
         await usersCollection.updateOne(
-            { email: user.email },
+            { username: user.username },
             { $push: { posts: postId } }
         );
 
@@ -99,12 +107,12 @@ router.get("/post", async (req, res) => {
         // Check if current user has liked the post
         const user = await verifySession(req);
         if (user) {
-            post.isLiked = post.likes.includes(user.email);
+            post.isLiked = post.likes.includes(user.username);
         } else {
             post.isLiked = false;
         }
 
-        res.status(200).json(post);
+        res.status(200).json(sanitizePost(post));
     } catch (error) {
         console.error("Error fetching post:", error);
         res.status(500).json({ error: "Internal server error" });
@@ -131,7 +139,7 @@ router.delete("/post", async (req, res) => {
             return res.status(404).json({ error: "Post not found" });
         }
 
-        if (post.author !== user.email) {
+        if (post.author !== user.username) {
             return res.status(403).json({ error: "Forbidden - You can only delete your own posts" });
         }
 
@@ -163,13 +171,13 @@ router.post('/share', async (req, res) => {
             return res.status(404).json({ error: "Post not found" });
         }
 
-        if (post.shares && post.shares.includes(user.email)) {
+        if (post.shares && post.shares.includes(user.username)) {
             return res.status(200).json({ message: "You Already Shared." });
         }
 
         await db.collection('posts').updateOne(
             { postId },
-            { $addToSet: { shares: user.email } }
+            { $addToSet: { shares: user.username } }
         );
 
         return res.status(200).json({ message: "Share recorded successfully." });
@@ -200,15 +208,15 @@ router.post("/like", async (req, res) => {
         }
 
         const likes = post.likes || [];
-        const userIndex = likes.indexOf(user.email);
+        const userIndex = likes.indexOf(user.username);
         let updatedLikes;
 
         if (userIndex === -1) {
             // Add like
-            updatedLikes = [...likes, user.email];
+            updatedLikes = [...likes, user.username];
         } else {
             // Remove like
-            updatedLikes = likes.filter(email => email !== user.email);
+            updatedLikes = likes.filter(username => username !== user.username);
         }
 
         await db.collection('posts').updateOne(
@@ -248,8 +256,8 @@ router.post("/comment", async (req, res) => {
         }
 
         const newComment = {
-            email: user.email,
             username: user.username,
+            fullName: user.fullName,
             avatar: user.avatarUrl,
             content,
             createdAt: new Date()
@@ -292,7 +300,7 @@ router.delete("/comment", async (req, res) => {
 
         // Find the comment to remove
         const commentIndex = post.comments.findIndex(
-            comment => comment.email === user.email && comment.content === commentContent
+            comment => comment.username === user.username && comment.content === commentContent
         );
 
         if (commentIndex === -1) {

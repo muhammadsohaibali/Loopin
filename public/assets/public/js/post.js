@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', async function () {
     // DOM Elements
+    const postUserDiv = document.querySelector('.user-info');
     const postUserAvatar = document.getElementById('postUserAvatar');
-    const postUsername = document.getElementById('postUsername');
+    const postfullName = document.getElementById('postUsername');
     const postTime = document.getElementById('postTime');
     const postVisibility = document.getElementById('postVisibility');
     const postText = document.getElementById('postText');
@@ -16,6 +17,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const commentsList = document.getElementById('commentsList');
     const commentInput = document.getElementById('commentInput');
     const postCommentButton = document.getElementById('postCommentButton');
+    const currentUserDiv = document.querySelectorAll('.user-profile');
     const currentUserAvatar = document.querySelectorAll('.currentUserAvatar');
     const currentUserDetails = document.getElementById('user-info-div');
     const deletePostBtn = document.getElementById('postDltButton')
@@ -168,7 +170,8 @@ document.addEventListener('DOMContentLoaded', async function () {
     // Populate post data in the UI
     function populatePostData(post) {
         postUserAvatar.src = post.avatar || DEFAULT_AVATAR;
-        postUsername.textContent = post.username;
+        postUserDiv.onclick = () => location.assign(`/profile/${post.author}`)
+        postfullName.textContent = post.fullName;
         postTime.textContent = formatRelativeTime(post.createdAt);
         postText.textContent = post.content;
 
@@ -233,7 +236,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                     <img src="${comment.avatar || DEFAULT_AVATAR}" alt="Profile Picture">
                 </div>
                 <div class="comment-content">
-                    <div class="comment-user">${comment.username}</div>
+                    <div class="comment-user">${comment.fullName}</div>
                     <p class="comment-text">${comment.content}</p>
                     <div class="comment-time">${formatRelativeTime(comment.createdAt)}</div>
                     ${comment.username === currentUser.username ? `
@@ -262,12 +265,13 @@ document.addEventListener('DOMContentLoaded', async function () {
             return;
         }
 
-        if (currentUser && currentUser.avatarUrl && currentUser.username && currentUser.email) {
-
+        if (currentUser && currentUser.avatarUrl && currentUser.username && currentUser.fullName) {
             currentUserAvatar.forEach(avatar => avatar.src = currentUser.avatarUrl)
 
-            currentUserDetails.children[0].textContent = currentUser.username
-            currentUserDetails.children[1].textContent = currentUser.email
+            currentUserDiv[0].onclick = () => location.assign(`/profile/${currentUser.username}`)
+
+            currentUserDetails.children[0].textContent = currentUser.fullName
+            currentUserDetails.children[1].textContent = currentUser.username
         } else {
             currentUserAvatar.src = DEFAULT_AVATAR;
         }
