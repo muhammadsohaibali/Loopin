@@ -7,8 +7,7 @@ router.get('/sitemap.xml', async (req, res) => {
             { url: '/', changefreq: 'daily', priority: 1.0 },
             { url: '/auth', changefreq: 'monthly', priority: 0.7 },
             { url: '/search', changefreq: 'daily', priority: 0.7 },
-            { url: '/chats', changefreq: 'monthly', priority: 0.6 },
-            { url: '/me', changefreq: 'monthly', priority: 0.5 }
+            { url: '/chats', changefreq: 'monthly', priority: 0.5 },
         ];
 
         // const hostname = process.env.NODE_ENV === 'production'
