@@ -32,10 +32,10 @@ app.set('trust proxy', 1);
 app.use(express.json());
 app.use(cookieParser());
 
-// app.use(cors({
-//     origin: process.env.SERVER_ADDRESS,
-//     credentials: true
-// }));
+app.use(cors({
+    origin: process.env.SERVER_ADDRESS,
+    credentials: true
+}));
 
 app.use(session({
     secret: process.env.SECRET_COOKIE_KEY,

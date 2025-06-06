@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
     const searchInput = document.getElementById('searchInput');
     const clearSearch = document.getElementById('clearSearch');
     const searchResults = document.getElementById('searchResults');
@@ -6,6 +6,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let debounceTimer;
     const DEBOUNCE_DELAY = 500; // 500ms delay
+
+    await displayCurrentUser();
+    searchInput.focus()
+    showLoader(false);
 
     // Debounce function to limit API calls
     function debounce(func, delay) {
@@ -76,6 +80,34 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         return data.users;
+    }
+
+    async function fetchCurrentUser() {
+        try {
+            const response = await fetch('/api/auth/current-user');
+            if (!response.ok) return null;
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching current user:', error);
+            return null;
+        }
+    }
+
+    async function displayCurrentUser() {
+        const currentUserDiv = document.getElementById('current-user-div');
+        const currentUserImg = document.getElementById('current-user-img');
+        const currentUserName = document.getElementById('current-user-name');
+        const currentUserHandle = document.getElementById('current-user-handle');
+
+        if (!currentUserImg || !currentUserName || !currentUserHandle) return;
+
+        const user = await fetchCurrentUser();
+        if (!user) return
+
+        currentUserDiv.onclick = () => location.assign(`/profile/${user.username}`)
+        currentUserHandle.textContent = user.username;
+        currentUserName.textContent = user.fullName;
+        currentUserImg.src = user.avatarUrl;
     }
 
     // Display search results

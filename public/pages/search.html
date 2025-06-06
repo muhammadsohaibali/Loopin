@@ -41,42 +41,90 @@
 </head>
 
 <body>
-    <div class="search-container">
-        <!-- Header Section -->
-        <header class="search-header">
-            <div class="header-content">
-                <h1>Search Users</h1>
-                <a href="/" class="btn-back">
-                    <i class="fas fa-arrow-left"></i>
-                    <span>Back</span>
+    <div id="notify"></div>
+
+    <div class="loader-container" id="loader-container">
+        <div class="loader">
+            <img src="/assets/imgs/icon.png" alt="Website Logo" class="loader-logo">
+        </div>
+    </div>
+
+    <div class="app-container">
+        <!-- Left Sidebar Navigation -->
+        <div class="sidebar-left">
+            <div class="logo" onclick="location.assign('/')">
+                <img src="/assets/imgs/icon.png" class="logo-img-custom" alt="">
+                <h1>Loopin</h1>
+            </div>
+
+            <nav class="main-nav">
+                <a href="/" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
                 </a>
-            </div>
-        </header>
+                <a href="/search" class="nav-item">
+                    <i class="fas fa-search"></i>
+                    <span>Search</span>
+                </a>
+                <a href="/chats" class="nav-item">
+                    <i class="fas fa-comment-dots"></i>
+                    <span>Chats</span>
+                </a>
+                <a href="/?action=add-post" class="nav-item">
+                    <i class="fas fa-plus"></i>
+                    <span>New Post</span>
+                </a>
+                <a href="#notifications" class="nav-item">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                </a>
+            </nav>
 
-        <!-- Search Box -->
-        <div class="search-box-container">
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Search for users..." autocomplete="off">
-                <button id="clearSearch" class="btn-clear">
-                    <i class="fas fa-times"></i>
-                </button>
+            <div class="user-profile" id="current-user-div">
+                <div class="avatar">
+                    <img id="current-user-img" src="https://dummyimage.com/150x150/cccccc/969696" alt="Profile Picture">
+                </div>
+                <div class="user-info-div">
+                    <span id="current-user-name" class="username">Username</span>
+                    <span id="current-user-handle" class="user-handle">user@example.com</span>
+                </div>
             </div>
         </div>
 
-        <!-- Search Results -->
-        <div class="search-results" id="searchResults">
-            <div class="empty-state">
-                <i class="fas fa-search"></i>
-                <p>Search for users by username or name</p>
+        <div class="search-container">
+            <!-- Header Section -->
+            <header class="search-header">
+                <div class="header-content">
+                    <h1 style="margin: 0 auto;">Search Users</h1>
+                </div>
+            </header>
+
+            <!-- Search Box -->
+            <div class="search-box-container">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search for users..." autocomplete="off">
+                    <button id="clearSearch" class="btn-clear">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search Results -->
+            <div class="search-results" id="searchResults">
+                <div class="empty-state">
+                    <i class="fas fa-search"></i>
+                    <p>Search for users by username or name</p>
+                </div>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div class="loading-indicator" id="loadingIndicator">
+                <div class="spinner"></div>
+                <span>Searching...</span>
             </div>
         </div>
 
-        <!-- Loading Indicator -->
-        <div class="loading-indicator" id="loadingIndicator">
-            <div class="spinner"></div>
-            <span>Searching...</span>
-        </div>
     </div>
 
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>

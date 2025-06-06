@@ -1,31 +1,3 @@
-// document.addEventListener('DOMContentLoaded', async function () {
-//     const DEFAULT_AVATAR = 'https://randomuser.me/api/portraits/lego/1.jpg';
-
-//     const currentUser = await fetchCurrentUser()
-//     const username = getUsernameFromURL()
-//     const user = await fetchUser(username);
-//     const userPosts = await fetchUserPosts(username)
-//     const userFollowing = await fetchUserFollowing(username)
-//     const isCurrentUser = await validateIfCurrentUser()
-
-//     if (!user.success && user.message === 'User Not Found') {
-//         this.location.assign(`/404?q=user&path=${username}`)
-//         return;
-//     } else if (user.isPrivate) {
-//         console.log("user is private")
-//         await loadUserDetails(user, true)
-//         populateFollowing(userFollowing, true)
-//         console.log('ho')
-//         handleNonCurrentUser(user, true)
-//     } else if (!user.success && user.message === "User Is Blocked") {
-//         console.log("user is blocked")
-//     } else {
-//         await loadUserDetails(user)
-//         await loadUserPosts(userPosts)
-//         populateFollowing(userFollowing)
-//         handleNonCurrentUser(user)
-//     }
-
 document.addEventListener('DOMContentLoaded', async function () {
     const DEFAULT_AVATAR = 'https://randomuser.me/api/portraits/lego/1.jpg';
 
