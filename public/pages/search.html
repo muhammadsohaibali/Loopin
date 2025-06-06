@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Basic Setup -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://loopin-social-platform.onrender.com/" />
+
+    <!-- SEO Meta Tags -->
+    <title>Search Users - Loopin</title>
+    <meta name="title" content="Loopin – A Light, Social Media Experience" />
+    <meta name="description"
+        content="Loopin is a simple, lightweight social platform where you can share thoughts, connect, and vibe without distractions. No downloads. No chaos. Just Loopin." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://loopin-social-platform.onrender.com/" />
+
+    <!-- Open Graph (for FB, WhatsApp, etc.) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://loopin-social-platform.onrender.com/" />
+    <meta property="og:title" content="Loopin – A Light, Social Media Experience" />
+    <meta property="og:description"
+        content="Loopin is your chill spot on the web to express, connect, and scroll without the noise." />
+    <meta property="og:image" content="https://loopin-social-platform.onrender.com/assets/imgs/preview.png" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="/assets/imgs/icon.png" type="image/png" />
+    <link rel="shortcut icon" href="/assets/imgs/icon.png" type="image/png" />
+
+    <!-- Fonts & Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/assets/public/css/components/notifier.css" />
+    <link rel="stylesheet" href="/assets/public/css/components/loader.css" />
+    <link rel="stylesheet" href="/assets/public/css/index.css" />
+    <link rel="stylesheet" href="/assets/public/css/search.css" />
+</head>
+
+<body>
+    <div class="search-container">
+        <!-- Header Section -->
+        <header class="search-header">
+            <div class="header-content">
+                <h1>Search Users</h1>
+                <a href="/" class="btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- Search Box -->
+        <div class="search-box-container">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search for users..." autocomplete="off">
+                <button id="clearSearch" class="btn-clear">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Search Results -->
+        <div class="search-results" id="searchResults">
+            <div class="empty-state">
+                <i class="fas fa-search"></i>
+                <p>Search for users by username or name</p>
+            </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div class="loading-indicator" id="loadingIndicator">
+            <div class="spinner"></div>
+            <span>Searching...</span>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="/assets/public/js/components/notifier.js"></script>
+    <script src="/assets/public/js/components/loader.js"></script>
+    <script src="/assets/public/js/search.js"></script>
+</body>
+
+</html>

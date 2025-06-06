@@ -43,6 +43,7 @@
     padding: 20px;
     min-width: 820px;
     margin-bottom: 20px;
+    transition: 0.3s;
 }
 
 /* Post Header */

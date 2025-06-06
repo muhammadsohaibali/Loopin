@@ -76,7 +76,7 @@ async function fetchFollowing(username, limit = 35) {
             {
                 username: { $in: followingUsername },
             },
-            { projection: { username: 1, fullName: 1, avatarUrl: 1, lastActive: 1 } }
+            { projection: { username: 1, fullName: 1, avatarUrl: 1, lastActive: 1, isOnline: 1 } }
         )
             .sort({ lastActive: -1 })
             .limit(limit)
@@ -226,7 +226,7 @@ router.get("/homepage-data", async (req, res) => {
         }
 
         // Fetch data in parallel - now using following instead of friends
-        const [posts, onlineFollowing] = await Promise.all([
+        const [posts, following] = await Promise.all([
             fetchPosts(user.username),
             fetchFollowing(user.username)
         ]);
@@ -255,11 +255,11 @@ router.get("/homepage-data", async (req, res) => {
                     likesCount: post.likesCount,
                     commentsCount: post.commentsCount
                 })),
-                onlineFollowing: onlineFollowing.map(following => ({
+                following: following.map(following => ({
                     username: following.username,
                     fullName: following.fullName,
-                    following: following.following,
                     avatar: following.avatarUrl,
+                    isOnline: following.isOnline,
                     lastActive: following.lastActive
                 }))
             }

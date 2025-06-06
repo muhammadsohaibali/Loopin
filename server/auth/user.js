@@ -7,12 +7,22 @@ const { connectDB } = require('../config/mongo');
 
 router.use(cookieParser());
 
-function sanitizeUser(user, currentUser = false) {
-    if (!currentUser) {
-        const { _id, password, email, isVerified, isPrivate, birthdate, accountStatus,
+function sanitizeUser(user, currentUser = false, isPrivateUser = false) {
+    if (!currentUser && !isPrivateUser) {
+        const { _id, password, email, isVerified, isPrivate, birthdate, accountStatus, pendingFollowRequests,
             joinedAt, sessions, blockedUsers, Settings, phone, lastActive, ...filtered } = user;
         return filtered;
     }
+
+    if (!currentUser && isPrivateUser) {
+        const { _id, password, email, isVerified, birthdate, accountStatus, pendingFollowRequests, following, posts,
+            followers, isOnline, joinedAt, sessions, blockedUsers, Settings, phone, lastActive, ...filtered } = user;
+        filtered['following'] = user.following.length
+        filtered['followers'] = user.followers.length
+        filtered['posts'] = user.posts.length
+        return filtered;
+    }
+
     const { _id, isOnline, lastActive, password, isVerified, isPrivate, sessions, ...filtered } = user;
     return filtered;
 }
@@ -62,7 +72,7 @@ router.get('/get-user', async (req, res) => {
         });
     }
 
-    const { username } = req.query; // username = user.email
+    const { username } = req.query;
 
     const db = await connectDB();
     const usersCollection = await db.collection('users');
@@ -95,11 +105,47 @@ router.get('/get-user', async (req, res) => {
     }
 
     if (user.isPrivate) {
-        return res.status(200).send({ success: false, message: "User Account Is Private" });
+        const isCurrentUser = false
+        return res.status(200).json(sanitizeUser(user, isCurrentUser, user.isPrivate));
     }
 
     return res.status(200).json(sanitizeUser(user));
 });
+
+router.get('/get-user-following', async (req, res) => {
+    const currentUser = await verifySession(req);
+
+    if (!currentUser) {
+        return res.status(401).json({
+            success: false,
+            message: "Unauthorized - Please log in"
+        });
+    }
+
+    const { username } = req.query;
+
+    const db = await connectDB();
+    const usersCollection = db.collection('users');
+
+    const user = await usersCollection.findOne({ username });
+
+    if (!user)
+        return res.status(404).json({ message: "User Not Found" });
+
+    if (currentUser.blockedUsers.includes(user.username))
+        return res.status(403).json({ message: "User Is Blocked" });
+
+    if (!currentUser.following.includes(user.username) && user.isPrivate)
+        return res.status(403).json({ message: "User Account Is Private" });
+
+    const followingUsers = await usersCollection
+        .find({ username: { $in: user.following } })
+        .project({ _id: 0, username: 1, fullName: 1, avatarUrl: 1, isOnline: 1, lastActive: 1 })
+        .toArray();
+
+    return res.status(200).json(followingUsers);
+});
+
 
 router.get('/current-user', async (req, res) => {
     const user = await verifySession(req);
@@ -127,17 +173,29 @@ router.get('/get-user-posts', async (req, res) => {
     const { username } = req.query;
 
     const db = await connectDB();
-    const usersCollection = await db.collection('posts');
+    const usersCollection = db.collection('users');
+    const postsCollection = db.collection('posts');
 
-    const posts = await usersCollection.find({ author: username }).toArray()
+    const user = await usersCollection.findOne({ username });
 
-    if (!posts || !posts.length) {
-        return res.status(200).json([]);
-    }
+    if (!user)
+        return res.status(404).json({ message: "User Not Found" });
+
+    if (currentUser.blockedUsers.includes(user.username))
+        return res.status(403).json({ message: "User Is Blocked" });
+
+    if (!currentUser.following.includes(user.username) && user.isPrivate)
+        return res.status(403).json({ message: "User Account Is Private" });
+
+    const posts = await postsCollection
+        .find({ author: username })
+        .sort({ createdAt: -1 }) // Optional: newest first
+        .toArray();
 
     const filtered = posts.map(({ _id, ...rest }) => rest);
 
     return res.status(200).json(filtered);
 });
+
 
 module.exports = router;

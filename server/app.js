@@ -4,7 +4,14 @@ const MongoStore = require('connect-mongo')
 const express = require('express');
 const cors = require("cors");
 const path = require('path');
+
+const http = require('http');
+const { Server } = require('socket.io');
+const chatSocket = require('./sockets/chat.socket');
+
 const app = express();
+const server = http.createServer(app)
+const io = new Server(server)
 
 const { connectDB } = require('./config/mongo');
 
@@ -46,16 +53,6 @@ connectDB();
 // ===================== Middlewares =====================
 const { authGate, unAuthOnlyPage } = require('./middlewares/redirect');
 
-// ======================= Routes =======================
-app.use("/api/auth/", require("./auth/user"));
-app.use("/api/auth/", require("./auth/login"));
-app.use("/api/auth/", require("./auth/logout"));
-app.use("/api/auth/", require("./auth/register"));
-app.use("/api/auth/", require("./auth/forgotpassword"));
-
-app.use("/api/", require("./routes/homepage"));
-app.use("/api/posts/", require("./routes/posts"));
-
 // ======================= Assets =======================
 app.use('/assets', express.static(path.join(__dirname, '../public/assets')));
 
@@ -74,6 +71,19 @@ Sitemap: https://loopin-social-platform.onrender.com/sitemap.xml
 
 app.get('/sitemap.xml', require('./services/sitemap'))
 
+// ======================= Routes =======================
+app.use("/api/admin/sync-postids-with-users", require("./helper/sync_post_ids"));
+
+app.use("/api/auth/", require("./auth/user"));
+app.use("/api/auth/", require("./auth/login"));
+app.use("/api/auth/", require("./auth/logout"));
+app.use("/api/auth/", require("./auth/register"));
+app.use("/api/auth/", require("./auth/forgotpassword"));
+
+app.use("/api/", require("./routes/homepage"));
+app.use("/api/posts/", require("./routes/posts"));
+app.use("/api/search/", require("./routes/querry"));
+
 // =================== Authentication ===================
 app.get('/auth', unAuthOnlyPage('login.html'));
 app.get('/auth/register', unAuthOnlyPage('register.html'));
@@ -83,14 +93,18 @@ app.get('/auth/verification-email-sent', unAuthOnlyPage('verification-email-sent
 
 // ======================= Pages =======================
 app.get('/', authGate("index.html", "login.html"));
-app.get('/chats', authGate("chats.html", "login.html"));
+app.get('/chats', authGate("test_chat.html", "login.html"));
 app.get('/profile/:uid', authGate("profile.html", "login.html"));
 app.get('/friends', authGate("friends.html", "login.html"));
 app.get('/post/:postId', authGate("post.html", "login.html"));
-app.get('/search', authGate("find-friends.html", "login.html"));
+app.get('/search', authGate("search.html", "login.html"));
 
 // =================== 404 Not Found ===================
 app.use((req, res, next) => {
+    if(req.path.includes('api')) {
+        return
+    }
+
     if (req.path === '/404')
         return res.status(404).sendFile(path.join(__dirname, '../public', '404.html'));
 
@@ -100,8 +114,13 @@ app.use((req, res, next) => {
     res.status(404).redirect(`/404?q=${errorType}&path=${encodeURIComponent(req.path)}`);
 });
 
+// =================== Socket.io ===================
+io.on('connection', (socket) => {
+    chatSocket(io, socket);
+});
+
 // =================== Start Server ===================
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     if (process.env.NODE_ENV === 'development') {
         console.log(`Server running on ${SERVER_ADDRESS}:${PORT}`);
     } else {

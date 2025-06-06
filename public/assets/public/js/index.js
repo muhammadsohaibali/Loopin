@@ -77,13 +77,13 @@ async function fetchHomepageData(run = 'all') {
                 populatePosts(data.posts);
                 break;
             case "following":
-                populateOnlineFollowing(data.onlineFollowing);
+                populateFollowing(data.following);
                 break;
             case "all":
             default:
                 populateUserInfo(data.user);
                 populatePosts(data.posts);
-                populateOnlineFollowing(data.onlineFollowing);
+                populateFollowing(data.following);
         }
     } catch (error) {
         console.error('Error fetching homepage data:', error);
@@ -118,11 +118,6 @@ function populateUserInfo(user) {
 
     if (usernameEl) usernameEl.textContent = user.fullName || '';
     if (userHandleEl) userHandleEl.textContent = user.username || '';
-
-    const onlineStatus = userProfile.querySelector('.online-status');
-    if (onlineStatus) {
-        onlineStatus.style.backgroundColor = user.isOnline ? '#4bb543' : '#adb5bd';
-    }
 }
 
 /**
@@ -136,9 +131,7 @@ function createPostHTML(post) {
             <div class="post-header">
                 <div class="user-info" onclick="location.assign('/profile/${post.author}')">
                     <div class="avatar">
-                        <img src="${post.avatar || DEFAULT_AVATAR}" 
-                             alt="${post.fullName}'s profile picture">
-                        ${post.authorIsOnline ? '<span class="online-status"></span>' : ''}
+                        <img src="${post.avatar || DEFAULT_AVATAR}" alt="${post.fullName}'s profile picture">
                     </div>
                     <div class="user-details">
                         <span class="username">${post.fullName}</span>
@@ -213,12 +206,12 @@ function populatePosts(posts) {
  * Populates online following users in the right sidebar
  * @param {Array} following - Array of following user objects
  */
-function populateOnlineFollowing(following) {
-    const onlineFollowingContainer = document.querySelector('.online-friends');
-    if (!onlineFollowingContainer) return;
+function populateFollowing(following) {
+    const followingContainer = document.querySelector('.online-friends');
+    if (!followingContainer) return;
 
     if (!following || !following.length) {
-        onlineFollowingContainer.innerHTML = `
+        followingContainer.innerHTML = `
             <div class="empty-state">
                 <i class="fas fa-user-friends"></i>
                 <p>No one you follow is online right now</p>
@@ -227,7 +220,19 @@ function populateOnlineFollowing(following) {
         return;
     }
 
-    onlineFollowingContainer.innerHTML = '';
+    followingContainer.innerHTML = '';
+    following.sort((a, b) => {
+        if (b.isOnline !== a.isOnline) return b.isOnline - a.isOnline;
+
+        if (!a.isOnline && !b.isOnline) {
+            const dateA = new Date(a.lastActive || 0);
+            const dateB = new Date(b.lastActive || 0);
+            return dateB - dateA;
+        }
+
+        return 0;
+    });
+
     following.forEach(user => {
         const userEl = document.createElement('div');
         userEl.className = 'following-user';
@@ -238,11 +243,11 @@ function populateOnlineFollowing(following) {
                 <div class="avatar">
                     <img src="${user.avatar || DEFAULT_AVATAR}" 
                         alt="${user.fullName}'s profile picture">
-                    <span class="online-status"></span>
+                    <span style="background-color: ${user.isOnline ? '#4bb543' : '#adb5bd'}" class="online-status"></span>
                 </div>
                 <div class="friend-info">
                     <span class="username">${user.fullName}</span>
-                    <span class="status">${formatLastActive(user.lastActive)}</span>
+                    <span class="status">${user.isOnline ? 'Online' : formatLastActive(user.lastActive)}</span>
                 </div>
             </div>
         `;
@@ -251,7 +256,7 @@ function populateOnlineFollowing(following) {
             location.assign(`/profile/${encodeURIComponent(user.username)}`);
         });
 
-        onlineFollowingContainer.appendChild(userEl);
+        followingContainer.appendChild(userEl);
     });
 }
 
@@ -346,16 +351,34 @@ function formatLastActive(lastActive) {
     if (!lastActive) return 'Active now';
 
     const now = new Date();
-    const activeDate = new Date(lastActive);
-    const minutes = Math.floor((now - activeDate) / (1000 * 60));
+    const then = new Date(lastActive);
+    const diffInSeconds = Math.floor((now - then) / 1000);
 
-    if (minutes < 1) return 'Active now';
-    if (minutes < 60) return `Active ${minutes}m ago`;
+    if (diffInSeconds < 5) return 'Active now';
+    if (diffInSeconds < 60) return `Active ${diffInSeconds} second${diffInSeconds === 1 ? '' : 's'} ago`;
+
+    const minutes = Math.floor(diffInSeconds / 60);
+    if (minutes < 60) return `Active ${minutes} minute${minutes === 1 ? '' : 's'} ago`;
 
     const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `Active ${hours}h ago`;
+    if (hours < 24) return `Active ${hours} hour${hours === 1 ? '' : 's'} ago`;
 
-    return 'Active recently';
+    const days = Math.floor(hours / 24);
+    if (days < 7) return `Active ${days} day${days === 1 ? '' : 's'} ago`;
+
+    const weeks = Math.floor(days / 7);
+    if (weeks < 4) return `Active ${weeks} week${weeks === 1 ? '' : 's'} ago`;
+
+    const nowYear = now.getFullYear();
+    const nowMonth = now.getMonth();
+    const thenYear = then.getFullYear();
+    const thenMonth = then.getMonth();
+
+    const monthDiff = (nowYear - thenYear) * 12 + (nowMonth - thenMonth);
+    if (monthDiff < 12) return `Active ${monthDiff} month${monthDiff === 1 ? '' : 's'} ago`;
+
+    const yearDiff = nowYear - thenYear;
+    return `Active ${yearDiff} year${yearDiff === 1 ? '' : 's'} ago`;
 }
 
 /**
@@ -373,7 +396,6 @@ async function logoutAll() {
         notify(`Failed: ${error}`, 'error');
     }
 }
-
 
 /**
  * Fetches additional posts for infinite scroll

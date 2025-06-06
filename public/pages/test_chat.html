@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Socket Chat Client</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+        }
+
+        .sidebar {
+            border-right: 1px solid #ddd;
+            padding-right: 20px;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        input {
+            padding: 8px;
+            margin-right: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 8px 15px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        #messages {
+            list-style: none;
+            padding: 0;
+            border: 1px solid #ddd;
+            min-height: 300px;
+            max-height: 60vh;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        #messages li {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .status {
+            color: #666;
+            font-style: italic;
+            font-size: 0.9em;
+        }
+
+        .error {
+            color: red;
+        }
+
+        #conversations {
+            list-style: none;
+            padding: 0;
+        }
+
+        #conversations li {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #conversations li:hover {
+            background-color: #f5f5f5;
+        }
+
+        #conversations li.active {
+            background-color: #e0f0ff;
+        }
+
+        .unread-count {
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.8em;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #333;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <h2>Chat App</h2>
+
+        <div class="input-group">
+            <label>Your UID:</label>
+            <input type="text" id="uid" required />
+            <button id="connectBtn">Connect</button>
+            <span id="connectionStatus" class="status">Disconnected</span>
+        </div>
+
+        <h3>Conversations</h3>
+        <ul id="conversations"></ul>
+    </div>
+
+    <div class="chat-container">
+        <div class="input-group">
+            <label>Current Chat With:</label>
+            <input type="text" id="chattingWith" readonly />
+        </div>
+
+        <h3>Messages:</h3>
+        <ul id="messages"></ul>
+
+        <div class="input-group">
+            <input type="text" id="messageInput" disabled placeholder="Type your message..." />
+            <button id="sendBtn" disabled>Send</button>
+            <span id="messageStatus"></span>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const uidInput = document.getElementById('uid');
+            const chattingWithInput = document.getElementById('chattingWith');
+            const messageInput = document.getElementById('messageInput');
+            const connectBtn = document.getElementById('connectBtn');
+            const sendBtn = document.getElementById('sendBtn');
+            const messagesList = document.getElementById('messages');
+            const conversationsList = document.getElementById('conversations');
+            const connectionStatus = document.getElementById('connectionStatus');
+            const messageStatus = document.getElementById('messageStatus');
+            const notification = document.getElementById('notification');
+
+            let socket;
+            let currentRoom = null;
+            let currentChattingWith = null;
+            let conversations = {};
+            let unreadCounts = {};
+
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            function addMessage(data, isHistorical = false) {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <strong>${escapeHtml(data.from)}</strong>: 
+                    ${escapeHtml(data.message)} 
+                    <small>(${new Date(data.timestamp).toLocaleTimeString()})</small>
+                    ${data.read ? '<span class="read-status">✓✓</span>' : ''}
+                `;
+
+                if (isHistorical) {
+                    messagesList.insertBefore(li, messagesList.firstChild);
+                } else {
+                    messagesList.appendChild(li);
+                    messagesList.scrollTop = messagesList.scrollHeight;
+                }
+            }
+
+            function showNotification(from, message) {
+                notification.innerHTML = `
+                    <strong>New message from ${escapeHtml(from)}</strong><br>
+                    ${escapeHtml(message.substring(0, 50))}...
+                `;
+                notification.style.display = 'block';
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 5000);
+            }
+
+            function updateConversationList() {
+                conversationsList.innerHTML = '';
+                Object.keys(conversations).forEach(roomId => {
+                    const otherUserId = conversations[roomId].participants.find(id => id !== uidInput.value.trim());
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        ${escapeHtml(otherUserId)}
+                        ${unreadCounts[roomId] ? `<span class="unread-count">${unreadCounts[roomId]}</span>` : ''}
+                    `;
+
+                    if (currentRoom === roomId) {
+                        li.classList.add('active');
+                    }
+
+                    li.addEventListener('click', () => {
+                        startChat(otherUserId);
+                    });
+                    conversationsList.appendChild(li);
+                });
+            }
+
+            function connectSocket(uid) {
+                if (socket) socket.disconnect();
+
+                socket = io(window.location.origin, {
+                    auth: { uid },
+                    reconnectionAttempts: 3,
+                    reconnectionDelay: 1000
+                });
+
+                connectionStatus.textContent = 'Connecting...';
+                connectionStatus.className = 'status';
+
+                socket.on('connect', () => {
+                    connectionStatus.textContent = 'Connected';
+                    connectionStatus.className = 'status connected';
+                    console.log('Connected as', uid);
+
+                    // Request conversations list after connecting
+                    socket.emit('request-conversations');
+                });
+
+                socket.on('receive-msg', (data) => {
+                    addMessage(data);
+
+                    // Mark as read if we're in this chat
+                    if (currentRoom === data.roomId) {
+                        socket.emit('mark-as-read', { messageId: data._id });
+                    }
+                });
+
+                socket.on('new-message', (data) => {
+                    if (currentRoom !== data.roomId) {
+                        showNotification(data.from, data.preview);
+                        unreadCounts[data.roomId] = (unreadCounts[data.roomId] || 0) + 1;
+                        updateConversationList();
+                    }
+                });
+
+                socket.on('conversations-list', (conversationsData) => {
+                    conversations = {};
+                    conversationsData.forEach(conv => {
+                        conversations[conv.roomId] = conv;
+                    });
+                    updateConversationList();
+
+                    // Load unread counts
+                    socket.emit('get-unread-counts');
+                });
+
+                socket.on('unread-counts', (counts) => {
+                    unreadCounts = counts;
+                    updateConversationList();
+                });
+
+                socket.on('disconnect', (reason) => {
+                    connectionStatus.textContent = `Disconnected: ${reason}`;
+                    connectionStatus.className = 'status error';
+                    messageInput.disabled = true;
+                    sendBtn.disabled = true;
+                });
+
+                socket.on('connect_error', (err) => {
+                    connectionStatus.textContent = `Connection failed: ${err.message}`;
+                    connectionStatus.className = 'status error';
+                });
+
+                socket.on('error', (err) => {
+                    messageStatus.textContent = `Error: ${err}`;
+                    messageStatus.className = 'error';
+                    setTimeout(() => messageStatus.textContent = '', 3000);
+                });
+            }
+
+            async function startChat(chattingWith) {
+                const uid = uidInput.value.trim();
+
+                if (!uid || !chattingWith) {
+                    alert('Please enter both UIDs');
+                    return;
+                }
+
+                try {
+                    if (!socket || !socket.connected) {
+                        connectSocket(uid);
+
+                        await new Promise((resolve) => {
+                            const checkConnection = () => {
+                                if (socket.connected) resolve();
+                                else setTimeout(checkConnection, 100);
+                            };
+                            checkConnection();
+                        });
+                    }
+
+                    currentChattingWith = chattingWith;
+                    currentRoom = [uid, chattingWith].sort().join('-');
+                    chattingWithInput.value = chattingWith;
+
+                    // Clear current messages
+                    messagesList.innerHTML = '';
+
+                    // Join the room
+                    socket.emit('start-chat', chattingWith);
+
+                    // Enable messaging
+                    messageInput.disabled = false;
+                    sendBtn.disabled = false;
+
+                    // Load message history
+                    socket.emit('load-messages', { roomId: currentRoom }, (messages) => {
+                        messages.forEach(msg => addMessage(msg, true));
+                        messagesList.scrollTop = messagesList.scrollHeight;
+                    });
+
+                    // Clear unread count for this conversation
+                    if (unreadCounts[currentRoom]) {
+                        delete unreadCounts[currentRoom];
+                        updateConversationList();
+                    }
+
+                } catch (err) {
+                    console.error('Error starting chat:', err);
+                    messageStatus.textContent = 'Failed to start chat';
+                    messageStatus.className = 'error';
+                }
+            }
+
+            connectBtn.addEventListener('click', () => {
+                const uid = uidInput.value.trim();
+                if (!uid) {
+                    alert('Please enter your UID');
+                    return;
+                }
+                connectSocket(uid);
+            });
+
+            sendBtn.addEventListener('click', () => {
+                const message = messageInput.value.trim();
+                const chattingWith = currentChattingWith;
+
+                if (!message) return;
+                if (!socket || !socket.connected) {
+                    messageStatus.textContent = 'Not connected to chat';
+                    messageStatus.className = 'error';
+                    return;
+                }
+
+                socket.emit('send-msg', { chattingWith, message }, (response) => {
+                    if (response?.error) {
+                        messageStatus.textContent = response.error;
+                        messageStatus.className = 'error';
+                    } else {
+                        // Add our own message to the UI immediately
+                        addMessage({
+                            from: uidInput.value.trim(),
+                            message,
+                            timestamp: new Date()
+                        });
+                        messageInput.value = '';
+                    }
+                });
+            });
+
+            // Allow sending with Enter key
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendBtn.click();
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

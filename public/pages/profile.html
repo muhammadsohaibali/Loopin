@@ -63,7 +63,7 @@
                     <i class="fas fa-home"></i>
                     <span>Home</span>
                 </a>
-                <a href="#search" class="nav-item">
+                <a href="/search" class="nav-item">
                     <i class="fas fa-search"></i>
                     <span>Search</span>
                 </a>
@@ -81,11 +81,10 @@
                 </a>
             </nav>
 
-            <div class="user-profile" onclick="logoutAll()">
+            <div class="user-profile">
                 <div class="avatar">
                     <img class="currentUserAvatar" src="https://dummyimage.com/150x150/cccccc/969696"
                         alt="Profile Picture">
-                    <span class="online-status"></span>
                 </div>
                 <div class="user-info-div" id="user-info-div">
                     <span class="username">Username</span>
@@ -94,6 +93,7 @@
             </div>
         </div>
 
+        <!-- Profile & Posts -->
         <div class="profile-container">
             <!-- Header Section -->
             <header class="profile-header">
@@ -148,97 +148,93 @@
 
             <!-- Posts Section -->
             <div class="profile-posts-section">
-                <div class="posts-grid">
-                    <!-- Placeholder for empty state -->
-                    <div class="empty-posts">
-                        <div class="empty-content">
-                            <i class="fas fa-camera"></i>
-                            <h3>Add Posts</h3>
-                            <p>When you add posts, they will appear on your profile.</p>
-                            <button class="btn-primary">
-                                <i class="fas fa-plus"></i>
-                                <span>Share your first posts</span>
+                <!-- Placeholder for empty state -->
+                <div class="empty-posts">
+                    <div class="empty-content">
+                        <i class="fas fa-camera"></i>
+                        <h3>Add Posts</h3>
+                        <p>When you add posts, they will appear on your profile.</p>
+                        <button class="btn-primary">
+                            <i class="fas fa-plus"></i>
+                            <span>Share your first posts</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sample post (hidden by default) -->
+                <div class="post-detail-container">
+                    <div class="post-container">
+                        <!-- Post Header -->
+                        <div class="post-header">
+                            <div class="user-info">
+                                <div class="avatar">
+                                    <img id="postUserAvatar" src="https://dummyimage.com/150x150/cccccc/969696"
+                                        alt="Profile Picture">
+                                    <span class="online-status" id="postUserStatus"></span>
+                                </div>
+                                <div class="user-details">
+                                    <span class="username" id="postUsername">User Name</span>
+                                    <span class="post-time" id="postTime">Time ago</span>
+                                </div>
+                            </div>
+                            <div class="custom-styles-11">
+                                <span class="post-visibility" id="postVisibility"></span>
+                                <button class="btn-more" id="postDltButton">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                    <span>Delete</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Post Content -->
+                        <div class="post-content">
+                            <p id="postText"></p>
+                            <div class="post-image-container" id="postImageContainer">
+                                <img id="postImage" src="https://dummyimage.com/800x400/cccccc/969696" alt="Post image">
+                            </div>
+                        </div>
+
+                        <!-- Post Stats -->
+                        <div class="post-stats">
+                            <span class="likes-count" id="likesCount">2 likes</span>
+                            <span class="comments-count" id="commentsCount">34 comments</span>
+                            <span class="shares-count" id="sharesCount">13 shares</span>
+                        </div>
+
+                        <!-- Post Actions -->
+                        <div class="post-actions">
+                            <button class="btn-like" id="likeButton">
+                                <i class="far fa-heart"></i>
+                                <span>Like</span>
+                            </button>
+                            <button class="btn-comment" id="commentButton">
+                                <i class="far fa-comment"></i>
+                                <span>Comment</span>
+                            </button>
+                            <button class="btn-share" id="shareButton">
+                                <i class="fas fa-share"></i>
+                                <span>Share</span>
                             </button>
                         </div>
-                    </div>
 
-                    <!-- Sample post (hidden by default) -->
-                    <div class="post-detail-container">
-                        <div class="post-container">
-                            <!-- Post Header -->
-                            <div class="post-header">
-                                <div class="user-info">
-                                    <div class="avatar">
-                                        <img id="postUserAvatar" src="https://dummyimage.com/150x150/cccccc/969696"
-                                            alt="Profile Picture">
-                                        <span class="online-status" id="postUserStatus"></span>
-                                    </div>
-                                    <div class="user-details">
-                                        <span class="username" id="postUsername">User Name</span>
-                                        <span class="post-time" id="postTime">Time ago</span>
-                                    </div>
+                        <!-- Comments Section -->
+                        <div class="comments-section">
+                            <h3>Comments</h3>
+                            <div class="comments-list" id="commentsList">
+                                <!-- Comments will be loaded here -->
+                            </div>
+
+                            <!-- Add Comment -->
+                            <div class="add-comment">
+                                <div class="avatar">
+                                    <img class="currentUserAvatar" src="https://dummyimage.com/150x150/cccccc/969696"
+                                        alt="Your Profile Picture">
                                 </div>
-                                <div class="custom-styles-11">
-                                    <span class="post-visibility" id="postVisibility"></span>
-                                    <button class="btn-more" id="postDltButton">
-                                        <i class="fa fa-trash" aria-hidden="true"></i>
-                                        <span>Delete</span>
+                                <div class="comment-input-container">
+                                    <input type="text" id="commentInput" placeholder="Write a comment...">
+                                    <button class="btn-post-comment" id="postCommentButton">
+                                        <i class="fas fa-paper-plane"></i>
                                     </button>
-                                </div>
-                            </div>
-
-                            <!-- Post Content -->
-                            <div class="post-content">
-                                <p id="postText"></p>
-                                <div class="post-image-container" id="postImageContainer">
-                                    <img id="postImage" src="https://dummyimage.com/800x400/cccccc/969696"
-                                        alt="Post image">
-                                </div>
-                            </div>
-
-                            <!-- Post Stats -->
-                            <div class="post-stats">
-                                <span class="likes-count" id="likesCount">2 likes</span>
-                                <span class="comments-count" id="commentsCount">34 comments</span>
-                                <span class="shares-count" id="sharesCount">13 shares</span>
-                            </div>
-
-                            <!-- Post Actions -->
-                            <div class="post-actions">
-                                <button class="btn-like" id="likeButton">
-                                    <i class="far fa-heart"></i>
-                                    <span>Like</span>
-                                </button>
-                                <button class="btn-comment" id="commentButton">
-                                    <i class="far fa-comment"></i>
-                                    <span>Comment</span>
-                                </button>
-                                <button class="btn-share" id="shareButton">
-                                    <i class="fas fa-share"></i>
-                                    <span>Share</span>
-                                </button>
-                            </div>
-
-                            <!-- Comments Section -->
-                            <div class="comments-section">
-                                <h3>Comments</h3>
-                                <div class="comments-list" id="commentsList">
-                                    <!-- Comments will be loaded here -->
-                                </div>
-
-                                <!-- Add Comment -->
-                                <div class="add-comment">
-                                    <div class="avatar">
-                                        <img class="currentUserAvatar"
-                                            src="https://dummyimage.com/150x150/cccccc/969696"
-                                            alt="Your Profile Picture">
-                                    </div>
-                                    <div class="comment-input-container">
-                                        <input type="text" id="commentInput" placeholder="Write a comment...">
-                                        <button class="btn-post-comment" id="postCommentButton">
-                                            <i class="fas fa-paper-plane"></i>
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -246,8 +242,66 @@
                 </div>
             </div>
         </div>
+
+        <!-- Right Sidebar - My Following -->
+        <div class="sidebar-right">
+            <div class="section-header">
+                <h3>My Following</h3>
+            </div>
+
+            <div class="online-friends">
+                <!-- Friend 1 -->
+                <div class="friend">
+                    <div class="avatar">
+                        <img src="https://dummyimage.com/150x150/cccccc/969696" alt="Profile Picture">
+                        <span class="online-status"></span>
+                    </div>
+                    <div class="friend-info">
+                        <span class="username">Friend Name</span>
+                        <span class="status">Active now</span>
+                    </div>
+                </div>
+
+                <!-- Friend 2 -->
+                <div class="friend">
+                    <div class="avatar">
+                        <img src="https://dummyimage.com/150x150/cccccc/969696" alt="Profile Picture">
+                        <span class="online-status"></span>
+                    </div>
+                    <div class="friend-info">
+                        <span class="username">Friend Name</span>
+                        <span class="status">Active X ago</span>
+                    </div>
+                </div>
+
+                <!-- Friend 3 -->
+                <div class="friend">
+                    <div class="avatar">
+                        <img src="https://dummyimage.com/150x150/cccccc/969696" alt="Profile Picture">
+                        <span class="online-status"></span>
+                    </div>
+                    <div class="friend-info">
+                        <span class="username">Friend Name</span>
+                        <span class="status">Active X ago</span>
+                    </div>
+                </div>
+
+                <!-- Friend 4 -->
+                <div class="friend">
+                    <div class="avatar">
+                        <img src="https://dummyimage.com/150x150/cccccc/969696" alt="Profile Picture">
+                        <span class="online-status"></span>
+                    </div>
+                    <div class="friend-info">
+                        <span class="username">Friend Name</span>
+                        <span class="status">Active X ago</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="/assets/public/js/components/loader.js"></script>
     <script src="/assets/public/js/components/notifier.js"></script>
     <script src="/assets/public/js/profile.js"></script>
