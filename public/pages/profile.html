@@ -40,8 +40,15 @@
     <link rel="stylesheet" href="/assets/public/css/post.css">
     <link rel="stylesheet" href="/assets/public/css/profile.css">
 
+    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-6NBWSH07NX"></script>
-    <script src="/assets/public/js/components/ga.js"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-6NBWSH07NX');
+    </script>
 </head>
 
 <body>
