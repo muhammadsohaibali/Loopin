@@ -327,3 +327,87 @@ body {
 .btn-message:hover {
     background-color: rgba(0, 0, 0, 0.02);
 }
+
+/* Add these media queries */
+@media (max-width: 600px) {
+    .profile-container {
+        min-width: unset;
+        width: 100%;
+        margin: 0;
+        padding: 15px;
+        border-radius: 0;
+    }
+
+    .profile-info-section {
+        padding: 15px 0;
+    }
+
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto;
+    }
+
+    .profile-name {
+        font-size: 24px;
+    }
+
+    .profile-stats {
+        gap: 15px;
+    }
+
+    .btn-container {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 388px) {
+    .profile-container {
+        padding: 10px;
+    }
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+    }
+
+    .profile-name {
+        font-size: 20px;
+    }
+
+    .profile-bio {
+        font-size: 14px;
+    }
+
+    .profile-stats {
+        gap: 10px;
+    }
+
+    .stat-number {
+        font-size: 16px;
+    }
+
+    .stat-label {
+        font-size: 12px;
+    }
+
+    .post {
+        min-width: unset;
+        width: 100%;
+    }
+
+    .header-content h1 {
+        font-size: 20px;
+    }
+
+    .btn-edit {
+        padding: 6px 8px;
+        font-size: 14px;
+    }
+}

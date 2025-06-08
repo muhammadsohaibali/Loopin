@@ -46,6 +46,7 @@ body {
     height: 100vh;
     position: sticky;
     top: 0;
+    z-index: 1000;
 }
 
 .main-content {
@@ -631,4 +632,93 @@ body {
     font-size: 14px;
     color: #8e8e8e;
     line-height: 1.4;
+}
+
+@media (max-width: 576px) {
+    .app-container {
+        grid-template-rows: auto 1fr;
+    }
+
+    .sidebar-left {
+        flex-direction: row;
+        padding: 8px;
+        height: auto;
+    }
+
+    .logo i,
+    .nav-item i {
+        font-size: 20px;
+    }
+
+    .main-nav {
+        gap: 4px;
+        margin: 0 4px;
+    }
+
+    .user-profile {
+        padding: 8px;
+    }
+
+    .avatar {
+        width: 32px;
+        height: 32px;
+    }
+
+    .main-content {
+        padding: 10px;
+    }
+
+    .post-input input {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
+    .btn-action,
+    .btn-like,
+    .btn-comment,
+    .btn-share {
+        padding: 6px 8px;
+        font-size: 14px;
+    }
+
+    .post-header,
+    .post-stats {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}
+
+@media (max-width: 388px) {
+    .sidebar-left {
+        padding: 4px;
+    }
+
+    .nav-item {
+        padding: 8px;
+    }
+
+    .main-content {
+        padding: 8px;
+    }
+
+    .post {
+        padding: 12px;
+    }
+
+    .post-actions {
+        flex-direction: row;
+        gap: 8px;
+        align-items: flex-start;
+    }
+
+    .btn-post {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+
+    .user-info {
+        flex-direction: row;
+        align-items: flex-start;
+    }
 }

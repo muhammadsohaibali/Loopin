@@ -3,7 +3,7 @@ const { connectDB } = require('../config/mongo');
 const onlineUsers = new Map(); // Track connected users
 
 module.exports = (io, socket) => {
-    console.log("Chat Socket Is Disabled")
+    // console.log("Chat Socket Is Disabled")
     // const { uid } = socket.handshake.auth;
     // if (!uid) return socket.disconnect(true);
 

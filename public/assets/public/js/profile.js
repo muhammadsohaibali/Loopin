@@ -1038,44 +1038,6 @@ document.addEventListener('DOMContentLoaded', async function () {
         });
     }
 
-    // function handleNonCurrentUser(user, isPrivate = false) {
-    //     if (isCurrentUserProfile) return;
-
-    //     const elements = getElements();
-    //     const { settingsBtn, editProfileBtn, emptyPostsDiv, shareProfileBtn } = elements.nonCurrentUsersDiv;
-
-    //     // Hide edit profile button and replace settings button with share button
-    //     if (editProfileBtn) editProfileBtn.remove();
-    //     if (shareProfileBtn && settingsBtn) {
-    //         settingsBtn.innerHTML = shareProfileBtn.innerHTML;
-    //         shareProfileBtn.remove();
-    //     }
-
-    //     // Handle empty posts state
-    //     if (!emptyPostsDiv) return;
-
-    //     if (isPrivate) {
-    //         if (elements.postsFeed) elements.postsFeed.remove();
-    //         emptyPostsDiv.innerHTML = `
-    //             <div class="empty-content">
-    //                 <i class="fas fa-lock"></i>
-    //                 <h3>This account is private</h3>
-    //                 <p>Follow To See ${escapeHTML(user.fullName)}'s Posts</p>
-    //             </div>`;
-    //     } else if (!user.posts?.length) {
-    //         if (elements.postsFeed) elements.postsFeed.remove();
-    //         const firstName = user.fullName?.split(' ')[0] || 'This user';
-    //         emptyPostsDiv.innerHTML = `
-    //             <div class="empty-content">
-    //                 <i class="fas fa-camera"></i>
-    //                 <h3>No Posts Yet</h3>
-    //                 <p>When ${escapeHTML(firstName)} adds posts, they'll show up here.</p>
-    //             </div>`;
-    //     } else {
-    //         emptyPostsDiv.remove();
-    //     }
-    // }
-
     function handleNonCurrentUser(user, isPrivate = false) {
         const elements = getElements();
         const { settingsBtn, editProfileBtn, emptyPostsDiv, shareProfileBtn } = elements.nonCurrentUsersDiv;
@@ -1154,72 +1116,6 @@ document.addEventListener('DOMContentLoaded', async function () {
             }
         }
     }
-
-    // function loadActionButtons(user) {
-    //     const actionBtnContainer = document.querySelector('.btn-container');
-    //     if (!actionBtnContainer) return;
-
-    //     if (isCurrentUserProfile) {
-    //         return actionBtnContainer.remove();
-    //     }
-
-    //     const followBtn = actionBtnContainer.querySelector('.btn-follow');
-    //     const messageBtn = actionBtnContainer.querySelector('.btn-message');
-
-    //     if (currentUser.following.includes(user.username)) {
-    //         followBtn.textContent = "Unfollow"
-    //         followBtn.style.backgroundColor = "#000000"
-    //         followBtn.addEventListener('click', async () => {
-    //             if (!followBtn.disabled) {
-    //                 followBtn.disabled = true;
-    //                 const data = await fetchUnFollowUser(user);
-    //                 followBtn.disabled = false;
-
-    //                 if (data?.success) {
-    //                     location.reload();
-    //                 } else {
-    //                     notify(data.message || "Failed to unfollow user", "error");
-    //                 }
-    //             }
-    //         })
-    //     } else if (user.isRequested) {
-    //         followBtn.textContent = "Requested"
-    //         followBtn.style.backgroundColor = "#ffffff"
-    //         followBtn.addEventListener('click', async () => {
-    //             if (!followBtn.disabled) {
-    //                 followBtn.disabled = true;
-    //                 const data = await fetchUnFollowUser(user);
-    //                 followBtn.disabled = false;
-
-    //                 if (data?.success) {
-    //                     location.reload();
-    //                 } else {
-    //                     notify(data.message || "Failed to unfollow user", "error");
-    //                 }
-    //             }
-    //         })
-    //     }
-
-    //     if (followBtn) {
-    //         followBtn.addEventListener('click', async () => {
-    //             if (!followBtn.disabled) {
-    //                 followBtn.disabled = true;
-    //                 const data = await fetchFollowUser(user);
-    //                 followBtn.disabled = false;
-
-    //                 if (data?.success) {
-    //                     location.reload();
-    //                 } else {
-    //                     notify(data.message || "Failed to follow user", "error");
-    //                 }
-    //             }
-    //         });
-    //     }
-
-    //     if (messageBtn) {
-    //         messageBtn.addEventListener('click', () => startChat(user));
-    //     }
-    // }
 
     function loadActionButtons(user) {
         const actionBtnContainer = document.querySelector('.btn-container');
@@ -1645,7 +1541,3 @@ document.addEventListener('DOMContentLoaded', async function () {
         // Implement chat functionality
     }
 });
-
-function accept(a) {
-    acceptFollowRequest(a)
-}

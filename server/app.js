@@ -8,6 +8,7 @@ const path = require('path');
 const http = require('http');
 const { Server } = require('socket.io');
 const chatSocket = require('./sockets/chat.socket');
+const testSocket = require('./sockets/test');
 
 const app = express();
 const server = http.createServer(app)
@@ -117,6 +118,7 @@ app.use((req, res, next) => {
 // =================== Socket.io ===================
 io.on('connection', (socket) => {
     chatSocket(io, socket);
+    testSocket(io, socket)
 });
 
 // =================== Start Server ===================

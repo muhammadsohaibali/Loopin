@@ -1,3 +1,13 @@
+html {
+    font-size: 14px;
+}
+
+@media (max-width: 388px) {
+    html {
+        font-size: 12px;
+    }
+}
+
 /* Base Styles */
 :root {
     --primary: #4361ee;
@@ -24,6 +34,8 @@ body {
     background-color: var(--background);
     color: var(--text);
     line-height: 1.6;
+    overflow-x: hidden;
+    min-width: 320px;
 }
 
 /* Search Container */
@@ -239,5 +251,45 @@ body {
 @media (max-width: 1200px) {
     .app-container {
         grid-template-columns: 80px 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .app-container {
+        grid-template-columns: 1fr;
+        /* Stack on small screens */
+    }
+}
+
+@media (max-width: 388px) {
+    .search-container {
+        padding: 10px;
+        margin: 10px auto;
+    }
+
+    .search-box i {
+        margin-right: 6px;
+    }
+
+    .search-box input {
+        font-size: 14px;
+    }
+
+    .header-content h1 {
+        font-size: 18px;
+    }
+
+    .user-card {
+        padding: 8px 10px;
+    }
+
+    .user-avatar {
+        width: 36px;
+        height: 36px;
+        margin-right: 10px;
+    }
+
+    .search-box {
+        padding: 8px 12px;
     }
 }

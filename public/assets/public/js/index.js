@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', async function () {
+    const socket = io();
+
+    socket.on('connect', async () => {
+        socket.emit('test', window.innerHeight, window.innerWidth);
+    })
+
     await fetchHomepageData();
     await setupCreatePost();
 

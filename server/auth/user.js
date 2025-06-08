@@ -300,6 +300,143 @@ router.post('/accept-follow-request', async (req, res) => {
     }
 });
 
+// Block a user
+router.post('/block', async (req, res) => {
+    const currentUser = await verifySession(req);
+
+    if (!currentUser) {
+        return res.status(401).json({
+            success: false,
+            message: "Unauthorized - Please log in"
+        });
+    }
+
+    const { username } = req.body;
+
+    if (!username) {
+        return res.status(400).json({
+            success: false,
+            message: "Username is required"
+        });
+    }
+
+    if (currentUser.username === username) {
+        return res.status(400).json({
+            success: false,
+            message: "You cannot block yourself"
+        });
+    }
+
+    const db = await connectDB();
+    const usersCollection = db.collection('users');
+
+    try {
+        // Check if user exists
+        const userToBlock = await usersCollection.findOne({ username });
+        if (!userToBlock) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        // Update current user's blocked list
+        await usersCollection.updateOne(
+            { username: currentUser.username },
+            {
+                $addToSet: { blockedUsers: username },
+                $pull: {
+                    following: username,
+                    followers: username
+                }
+            }
+        );
+
+        // Remove from the blocked user's followers/following if they exist
+        await usersCollection.updateOne(
+            { username },
+            {
+                $pull: {
+                    followers: currentUser.username,
+                    following: currentUser.username
+                }
+            }
+        );
+
+        // Remove any pending follow requests
+        await usersCollection.updateOne(
+            { username },
+            { $pull: { pendingFollowRequests: currentUser.username } }
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: "User blocked successfully"
+        });
+    } catch (error) {
+        console.error("Error blocking user:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        });
+    }
+});
+
+// Unblock a user
+router.post('/unblock', async (req, res) => {
+    const currentUser = await verifySession(req);
+
+    if (!currentUser) {
+        return res.status(401).json({
+            success: false,
+            message: "Unauthorized - Please log in"
+        });
+    }
+
+    const { username } = req.body;
+
+    if (!username) {
+        return res.status(400).json({
+            success: false,
+            message: "Username is required"
+        });
+    }
+
+    const db = await connectDB();
+    const usersCollection = db.collection('users');
+
+    try {
+        // Check if user is actually blocked
+        const currentUserData = await usersCollection.findOne({
+            username: currentUser.username
+        });
+
+        if (!currentUserData.blockedUsers.includes(username)) {
+            return res.status(400).json({
+                success: false,
+                message: "User is not blocked"
+            });
+        }
+
+        // Remove from blocked list
+        await usersCollection.updateOne(
+            { username: currentUser.username },
+            { $pull: { blockedUsers: username } }
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: "User unblocked successfully"
+        });
+    } catch (error) {
+        console.error("Error unblocking user:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        });
+    }
+});
+
 router.get('/get-user', async (req, res) => {
     const currentUser = await verifySession(req);
 
