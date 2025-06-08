@@ -100,18 +100,17 @@ body {
     font-size: 14px;
     color: var(--gray-dark);
     font-weight: 400;
-    margin-bottom: 4px;
 }
 
 .profile-name {
     font-size: 28px;
     font-weight: 700;
-    margin-bottom: 12px;
+    margin-bottom: 2px;
 }
 
 .profile-bio {
     font-size: 16px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     color: var(--gray-dark);
 }
 
@@ -124,6 +123,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    cursor: pointer;
 }
 
 .stat-number {
@@ -294,17 +294,21 @@ body {
     font-weight: 600;
     font-size: 14px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.1s ease;
     border: none;
     outline: none;
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    text-align: center;
+    align-items: center;
 }
 
 .btn:active {
-    transform: scale(0.96);
+    transform: scale(0.98);
 }
 
 .btn-follow {
-    gap: 5px;
     background-color: var(--primary);
     color: var(--white);
 }
@@ -316,7 +320,6 @@ body {
 .btn-message {
     background-color: var(--white);
     color: var(--text);
-    gap: 5px;
     border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
