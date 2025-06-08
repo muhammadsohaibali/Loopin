@@ -1645,3 +1645,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         // Implement chat functionality
     }
 });
+
+function accept(a) {
+    acceptFollowRequest(a)
+}

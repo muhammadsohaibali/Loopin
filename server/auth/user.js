@@ -181,13 +181,10 @@ router.post('/unfollow', async (req, res) => {
             });
         }
 
-        // Check if the current user has a pending follow request
         const hasPendingRequest = user.pendingFollowRequests?.includes(currentUser.username);
 
-        // If not following but has pending request
         if (!currentUser.following?.includes(user.username)) {
             if (hasPendingRequest) {
-                // Cancel the pending request
                 await usersCollection.updateOne(
                     { username: user.username },
                     { $pull: { pendingFollowRequests: currentUser.username } }
@@ -203,7 +200,6 @@ router.post('/unfollow', async (req, res) => {
             });
         }
 
-        // Regular unfollow logic
         await Promise.all([
             usersCollection.updateOne(
                 { username: currentUser.username },
@@ -250,7 +246,6 @@ router.post('/accept-follow-request', async (req, res) => {
         const db = await connectDB();
         const usersCollection = db.collection('users');
 
-        // 1. Verify the requesting user exists
         const requestingUser = await usersCollection.findOne({ username });
         if (!requestingUser) {
             return res.status(404).json({
@@ -259,7 +254,6 @@ router.post('/accept-follow-request', async (req, res) => {
             });
         }
 
-        // 2. Check if there's actually a pending request
         if (!currentUser.pendingFollowRequests?.includes(username)) {
             return res.status(400).json({
                 success: false,
@@ -267,25 +261,21 @@ router.post('/accept-follow-request', async (req, res) => {
             });
         }
 
-        // 3. Perform the updates in a transaction for data consistency
         const session = db.startSession();
         try {
             await session.withTransaction(async () => {
-                // Remove from pending requests
                 await usersCollection.updateOne(
                     { username: currentUser.username },
                     { $pull: { pendingFollowRequests: username } },
                     { session }
                 );
 
-                // Add to followers
                 await usersCollection.updateOne(
                     { username: currentUser.username },
                     { $addToSet: { followers: username } },
                     { session }
                 );
 
-                // Add to requesting user's following
                 await usersCollection.updateOne(
                     { username: username },
                     { $addToSet: { following: currentUser.username } },
@@ -310,7 +300,6 @@ router.post('/accept-follow-request', async (req, res) => {
     }
 });
 
-// Get Reqs
 router.get('/get-user', async (req, res) => {
     const currentUser = await verifySession(req);
 
@@ -332,23 +321,18 @@ router.get('/get-user', async (req, res) => {
         return res.status(200).send({ success: false, message: "User Not Found" });
     }
 
-    // Check if the requested user is the current user
     if (deepEqual(user, currentUser)) {
         return res.status(200).json(sanitizeUser(user, true));
     }
 
-    // Check if current user has blocked the requested user
     if (currentUser.blockedUsers.includes(user.username)) {
         return res.status(200).send({ success: false, message: "User Is Blocked" });
     }
 
-    // Check if requested user is not verified
     if (!user.isVerified) {
         return res.status(200).send({ success: false, message: "User Is Not Verified" });
     }
 
-    // Determine the sanitization case
-    // Determine the sanitization case
     let sanitizedUser;
     if (user.isPrivate) {
         const isFollowing = currentUser.following.includes(user.username);
@@ -356,7 +340,6 @@ router.get('/get-user', async (req, res) => {
 
         sanitizedUser = sanitizeUser(user, false, true, isFollowing);
 
-        // Add isRequested field for private accounts when not following
         if (!isFollowing) {
             sanitizedUser = {
                 ...sanitizedUser,
@@ -368,6 +351,19 @@ router.get('/get-user', async (req, res) => {
     }
 
     return res.status(200).json(sanitizedUser);
+});
+
+router.get('/current-user', async (req, res) => {
+    const user = await verifySession(req);
+
+    if (!user) {
+        return res.status(401).json({
+            success: false,
+            message: "Unauthorized - Please log in"
+        });
+    }
+
+    return res.status(200).json(sanitizeUser(user, true));
 });
 
 router.get('/get-user-following', async (req, res) => {
@@ -390,32 +386,42 @@ router.get('/get-user-following', async (req, res) => {
     if (!user)
         return res.status(404).json({ message: "User Not Found" });
 
+    if (deepEqual(user, currentUser)) {
+        const followingUsers = await getFollowingUsers(user, usersCollection);
+        return res.status(200).json(followingUsers);
+    }
+
     if (currentUser.blockedUsers.includes(user.username))
         return res.status(403).json({ message: "User Is Blocked" });
 
     if (!currentUser.following.includes(user.username) && user.isPrivate)
         return res.status(403).json({ message: "User Account Is Private" });
 
-    const followingUsers = await usersCollection
-        .find({ username: { $in: user.following } })
-        .project({ _id: 0, username: 1, fullName: 1, avatarUrl: 1, isOnline: 1, lastActive: 1 })
-        .toArray();
+    async function getFollowingUsers(user, usersCollection) {
+        if (!user || !Array.isArray(user.following)) {
+            throw new Error("Invalid user or following list.");
+        }
 
+        const followingUsers = await usersCollection
+            .find({ username: { $in: user.following } })
+            .project({
+                _id: 0,
+                username: 1,
+                fullName: 1,
+                avatarUrl: 1,
+                isOnline: 1,
+                lastActive: 1,
+            })
+            .toArray();
+
+        return followingUsers;
+    }
+
+    const followingUsers = await getFollowingUsers(user, usersCollection);
     return res.status(200).json(followingUsers);
 });
 
-router.get('/current-user', async (req, res) => {
-    const user = await verifySession(req);
 
-    if (!user) {
-        return res.status(401).json({
-            success: false,
-            message: "Unauthorized - Please log in"
-        });
-    }
-
-    return res.status(200).json(sanitizeUser(user, true));
-});
 
 router.get('/get-user-posts', async (req, res) => {
     const currentUser = await verifySession(req);
@@ -438,21 +444,34 @@ router.get('/get-user-posts', async (req, res) => {
     if (!user)
         return res.status(404).json({ message: "User Not Found" });
 
+    if (deepEqual(user, currentUser)) {
+        const userPosts = await getPostsByUsername(username, postsCollection);
+        return res.status(200).json(userPosts);
+    }
+
     if (currentUser.blockedUsers.includes(user.username))
         return res.status(403).json({ message: "User Is Blocked" });
 
     if (!currentUser.following.includes(user.username) && user.isPrivate)
         return res.status(403).json({ message: "User Account Is Private" });
 
-    const posts = await postsCollection
-        .find({ author: username })
-        .sort({ createdAt: -1 }) // Optional: newest first
-        .toArray();
+    async function getPostsByUsername(username, postsCollection) {
+        if (!username || typeof username !== 'string') {
+            throw new Error("Invalid username.");
+        }
 
-    const filtered = posts.map(({ _id, ...rest }) => rest);
+        const posts = await postsCollection
+            .find({ author: username })
+            .sort({ createdAt: -1 })
+            .toArray();
 
-    return res.status(200).json(filtered);
+        const filtered = posts.map(({ _id, ...rest }) => rest);
+
+        return filtered;
+    }
+
+    const userPosts = await getPostsByUsername(username, postsCollection);
+    return res.status(200).json(userPosts);
 });
-
 
 module.exports = router;
