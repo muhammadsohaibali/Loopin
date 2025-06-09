@@ -21,11 +21,11 @@ require("dotenv").config();
 let SERVER_ADDRESS, PORT;
 
 if (process.env.NODE_ENV === 'development') {
-    SERVER_ADDRESS = '192.168.100.4';
-    PORT = 3000;
+    SERVER_ADDRESS = 'http://192.168.100.4';
+    PORT = 3000
 } else {
-    SERVER_ADDRESS = process.env.SERVER_ADDRESS;
-    PORT = process.env.PORT;
+    SERVER_ADDRESS = process.env.PROD_ADDRESS;
+    PORT = process.env.PORT
 }
 
 app.set('trust proxy', 1);
@@ -102,7 +102,7 @@ app.get('/search', authGate("search.html", "login.html"));
 
 // =================== 404 Not Found ===================
 app.use((req, res, next) => {
-    if(req.path.includes('api')) {
+    if (req.path.includes('api')) {
         return
     }
 

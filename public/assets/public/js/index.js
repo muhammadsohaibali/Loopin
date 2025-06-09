@@ -1,10 +1,4 @@
 document.addEventListener('DOMContentLoaded', async function () {
-    const socket = io();
-
-    socket.on('connect', async () => {
-        socket.emit('test', window.innerHeight, window.innerWidth);
-    })
-
     await fetchHomepageData();
     await setupCreatePost();
 
@@ -103,6 +97,8 @@ async function fetchHomepageData(run = 'all') {
  */
 function populateUserInfo(user) {
     if (!user) return;
+
+    userConnectedSocket(user.username)
 
     const userProfile = document.querySelector('.user-profile');
     if (!userProfile) return;
